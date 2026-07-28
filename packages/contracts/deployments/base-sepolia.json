@@ -1,0 +1,11 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  "escrowProxy": "0x7275FB5e77c18143F8f87d8B1485Ca840ADec1eB",
+  "implementation": "0x144762e02f9676593D955CF0d184323474C79805",
+  "owner": "0x3799cafa388da047cAF7c999e31c844705FadfAe",
+  "deployedAt": "2026-07-28T07:12:00Z",
+  "upgradeable": true,
+  "explorer": "https://sepolia.basescan.org/address/0x7275FB5e77c18143F8f87d8B1485Ca840ADec1eB"
+}

@@ -25,7 +25,7 @@ OUT=$(forge script script/DeployUpgradeable.s.sol:DeployUpgradeable \
   -vvvv 2>&1)
 echo "$OUT"
 
-PROXY=$(echo "$OUT" | sed -n 's/.*PaylaneEscrow proxy[[:space:]]*//p' | head -1 | tr -d '\r')
+PROXY=$(echo "$OUT" | sed -n 's/.*PaylaneEscrow proxy[[:space:]]*\(0x[a-fA-F0-9]\{40\}\).*/\1/p' | head -1 | tr -d '\r')
 if [[ -z "$PROXY" ]]; then
   BROADCAST=$(ls -t broadcast/DeployUpgradeable.s.sol/${CHAIN_ID}/run-latest.json 2>/dev/null | head -1 || true)
   if [[ -n "${BROADCAST:-}" ]]; then
