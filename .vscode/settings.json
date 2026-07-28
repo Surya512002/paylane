@@ -1,0 +1,12 @@
+{
+  "typescript.tsdk": "apps/web/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "eslint.workingDirectories": [{ "directory": "apps/web", "changeProcessCWD": true }],
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/packages/contracts/lib": true,
+    "**/packages/contracts/out": true,
+    "**/packages/contracts/cache": true
+  }
+}
