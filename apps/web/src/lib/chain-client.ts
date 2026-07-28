@@ -11,6 +11,14 @@ export const supportedChainPresets = resolveSupportedChains();
 export const supportedChains: readonly Chain[] = supportedChainPresets.map(chainPresetToViem);
 export const activeChain: Chain = chainPresetToViem(activeChainPreset);
 
+/** Wagmi requires a non-empty tuple of chains. */
+function asWagmiChains(chains: readonly Chain[]): readonly [Chain, ...Chain[]] {
+  if (chains.length === 0) return [activeChain];
+  return [chains[0], ...chains.slice(1)] as readonly [Chain, ...Chain[]];
+}
+
+export const wagmiChains = asWagmiChains(supportedChains);
+
 /** @deprecated use activeChain */
 export const arcChain = activeChain;
 /** @deprecated use activeChain */
