@@ -3,44 +3,44 @@ import { InfoCallout, StepRail, QuickLinks } from "@/components/PageChrome";
 
 export default function HomePage() {
   return (
-    <div className="w-full">
-      <section className="relative min-h-[min(78vh,44rem)] w-full overflow-hidden">
+    <div className="w-full overflow-x-clip">
+      <section className="relative w-full overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/brand/paylane-hero-lanes.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#eef3fb]/95 via-[#eef3fb]/85 to-[#eef3fb]/35" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#eef3fb]/95 via-[#eef3fb]/88 to-[#eef3fb]/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent" />
         <div className="lane-rail lane-animated absolute bottom-0 left-0 right-0 h-1.5" />
 
-        <div className="relative mx-auto flex min-h-[min(78vh,44rem)] w-full max-w-7xl flex-col justify-center px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
+        <div className="relative mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-12 sm:px-6 sm:py-16 md:min-h-[min(72vh,40rem)] md:py-20 lg:px-8">
           <p className="animate-rise font-display text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl md:text-7xl">
             Paylane
           </p>
-          <h1 className="animate-rise-delay mt-5 max-w-2xl font-display text-2xl font-semibold leading-snug text-[var(--ink-soft)] md:text-3xl">
+          <h1 className="animate-rise-delay mt-4 max-w-2xl font-display text-xl font-semibold leading-snug text-[var(--ink-soft)] sm:mt-5 sm:text-2xl md:text-3xl">
             The USDC lane for work and agents on Arc and Base.
           </h1>
-          <p className="animate-rise-delay-2 mt-4 max-w-xl text-base text-[var(--muted)] md:text-lg">
+          <p className="animate-rise-delay-2 mt-3 max-w-xl text-sm text-[var(--muted)] sm:mt-4 sm:text-base md:text-lg">
             Escrow protects freelance jobs. Instant x402 pay unlocks APIs. One wallet, clear rules,
             and receipts on Arc Testnet or Base Sepolia today.
           </p>
-          <div className="animate-rise-delay-2 mt-9 flex flex-wrap gap-3">
-            <Link href="/jobs/new" className="btn-primary">
+          <div className="animate-rise-delay-2 mt-7 flex w-full flex-col gap-2.5 sm:mt-9 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-3">
+            <Link href="/jobs/new" className="btn-primary w-full sm:w-auto">
               Post a job
             </Link>
-            <Link href="/agents" className="btn-secondary">
+            <Link href="/agents" className="btn-secondary w-full sm:w-auto">
               Pay an API
             </Link>
-            <Link href="/docs" className="btn-ghost">
+            <Link href="/docs" className="btn-ghost w-full justify-center sm:w-auto sm:justify-start">
               Docs →
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-4 pb-20 pt-20 sm:px-6 md:pt-24 lg:px-8">
+      <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-20 md:pt-24 lg:px-8">
         <h2 className="font-display text-2xl font-semibold">How money moves</h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
           Two products, two rulebooks — never mixed. Pick the lane that matches your work.

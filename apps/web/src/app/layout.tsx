@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="h-full overflow-x-hidden">
+    <html lang="en" className="h-full">
       <body
-        className={`${figtree.variable} ${syne.variable} h-full antialiased flex min-h-screen w-full max-w-[100vw] flex-col overflow-x-hidden`}
+        className={`${figtree.variable} ${syne.variable} flex min-h-screen w-full flex-col antialiased`}
       >
         <Providers>
           <Header />

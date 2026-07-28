@@ -250,12 +250,14 @@ export default function JobDetailPage() {
           <p>
             <span className="text-[var(--muted)]">Client</span>
             <br />
-            <span className="font-mono text-xs">{job.client.walletAddress}</span>
+            <span className="break-all font-mono text-xs">{job.client.walletAddress}</span>
           </p>
           <p>
             <span className="text-[var(--muted)]">Worker</span>
             <br />
-            <span className="font-mono text-xs">{job.worker?.walletAddress ?? "Unassigned"}</span>
+            <span className="break-all font-mono text-xs">
+              {job.worker?.walletAddress ?? "Unassigned"}
+            </span>
           </p>
           {job.onchainJobId && (
             <p className="text-xs text-[var(--muted)]">On-chain job #{job.onchainJobId}</p>

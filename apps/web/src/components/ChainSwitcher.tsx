@@ -45,7 +45,7 @@ export function ChainSwitcher({
   return (
     <select
       className={clsx(
-        "max-w-[6.5rem] shrink truncate rounded-lg border bg-transparent px-2 py-1.5 text-xs font-medium sm:max-w-[8.5rem]",
+        "w-full max-w-full shrink rounded-lg border bg-transparent px-2 py-1.5 text-xs font-medium sm:w-auto sm:max-w-[8.5rem]",
         wrongNetwork
           ? "border-amber-400 text-amber-900"
           : "border-[var(--border)] text-[var(--ink-soft)]",

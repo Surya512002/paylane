@@ -23,13 +23,15 @@ export function PageHero({
         imageSrc && "md:grid md:grid-cols-[1.2fr_0.8fr]",
       )}
     >
-      <div className="relative z-10 p-6 pb-8 md:p-8 md:pb-10">
+      <div className="relative z-10 p-4 pb-6 sm:p-6 sm:pb-8 md:p-8 md:pb-10">
         {eyebrow && <p className="badge badge-brand mb-3">{eyebrow}</p>}
-        <h1 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">{title}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
+          {title}
+        </h1>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--muted)] md:text-base">
           {subtitle}
         </p>
-        {actions && <div className="mt-6 flex flex-wrap gap-2">{actions}</div>}
+        {actions && <div className="mt-5 flex flex-wrap gap-2 sm:mt-6">{actions}</div>}
       </div>
       {imageSrc && (
         <div className="relative flex min-h-[11rem] items-center justify-center bg-[var(--surface-2)]/60 md:min-h-[14rem]">

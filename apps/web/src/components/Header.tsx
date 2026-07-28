@@ -126,8 +126,9 @@ export function Header() {
   function renderWalletActions() {
     if (!mounted) {
       return (
-        <button type="button" disabled className="btn-primary shrink-0 text-sm opacity-70">
-          Connect wallet
+        <button type="button" disabled className="btn-primary shrink-0 px-3 py-2 text-xs opacity-70 sm:px-4 sm:py-2.5 sm:text-sm">
+          <span className="sm:hidden">Connect</span>
+          <span className="hidden sm:inline">Connect wallet</span>
         </button>
       );
     }
@@ -138,25 +139,30 @@ export function Header() {
           type="button"
           onClick={() => connect({ connector: connectors[0] })}
           disabled={isPending}
-          className="btn-primary shrink-0 text-sm"
+          className="btn-primary shrink-0 px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm"
         >
-          Connect wallet
+          <span className="sm:hidden">Connect</span>
+          <span className="hidden sm:inline">Connect wallet</span>
         </button>
       );
     }
 
     if (!session) {
       return (
-        <button type="button" onClick={signIn} className="btn-primary shrink-0 text-sm">
+        <button
+          type="button"
+          onClick={signIn}
+          className="btn-primary shrink-0 px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm"
+        >
           Sign in
         </button>
       );
     }
 
     return (
-      <div className="flex shrink-0 items-center gap-2 text-xs">
+      <div className="flex shrink-0 items-center gap-1.5 text-xs sm:gap-2">
         <NotificationBell />
-        <span className="hidden rounded-lg bg-[var(--surface-2)] px-2 py-1 font-mono sm:inline">
+        <span className="hidden rounded-lg bg-[var(--surface-2)] px-2 py-1 font-mono md:inline">
           {session.walletAddress?.slice(0, 6)}…{session.walletAddress?.slice(-4)}
         </span>
         {session.isAdmin && (
@@ -171,7 +177,7 @@ export function Header() {
             disconnect();
             setSession(null);
           }}
-          className="btn-ghost text-xs"
+          className="btn-ghost px-2 py-1 text-xs"
         >
           Out
         </button>
@@ -181,11 +187,25 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--surface)] shadow-sm">
-      <div className="relative mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <Link href="/" className="group flex shrink-0 items-center gap-2">
-            <span className="lane-rail lane-animated h-7 w-7 rounded-lg" aria-hidden />
-            <span className="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
+      <div className="relative mx-auto flex w-full max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3 lg:px-8">
+        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+          <MobileNav
+            links={links}
+            mode={mode}
+            extra={
+              mounted && cfg ? (
+                <div className="border-t border-[var(--border)] pt-3 sm:hidden">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+                    Network
+                  </p>
+                  <ChainSwitcher chains={cfg.supportedChains} />
+                </div>
+              ) : null
+            }
+          />
+          <Link href="/" className="group flex min-w-0 shrink items-center gap-2">
+            <span className="lane-rail lane-animated h-7 w-7 shrink-0 rounded-lg" aria-hidden />
+            <span className="font-display truncate text-lg font-bold tracking-tight text-[var(--ink)] sm:text-xl">
               Paylane
             </span>
           </Link>
@@ -216,11 +236,10 @@ export function Header() {
               Docs
             </Link>
           </nav>
-          <MobileNav links={links} />
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <div className="hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)] p-0.5 text-xs md:flex">
+          <div className="hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)] p-0.5 text-xs lg:flex">
             <Link
               href="/jobs"
               className={clsx(
@@ -241,11 +260,15 @@ export function Header() {
             </Link>
           </div>
 
-          {mounted && cfg && <ChainSwitcher chains={cfg.supportedChains} />}
+          {mounted && cfg && (
+            <div className="hidden sm:block">
+              <ChainSwitcher chains={cfg.supportedChains} />
+            </div>
+          )}
 
           {cfg?.demoMode && !session && (
             <select
-              className="hidden max-w-[7.5rem] rounded-lg border border-[var(--border)] bg-transparent px-2 py-1.5 text-xs sm:block"
+              className="hidden max-w-[7.5rem] rounded-lg border border-[var(--border)] bg-transparent px-2 py-1.5 text-xs md:block"
               defaultValue=""
               onChange={(e) => {
                 if (e.target.value) void demoLogin(e.target.value);
