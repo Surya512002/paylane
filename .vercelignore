@@ -1,0 +1,12 @@
+**/node_modules
+**/.next
+**/.tools
+**/cache
+**/out
+**/.git
+workpay/packages/contracts/lib
+workpay/packages/contracts/broadcast
+workpay/packages/contracts/out
+workpay/packages/contracts/cache
+**/*.log
+workpay/.agents
