@@ -3,9 +3,8 @@ import { InfoCallout, StepRail, QuickLinks } from "@/components/PageChrome";
 
 export default function HomePage() {
   return (
-    <div className="relative -mx-4 -mt-8 overflow-hidden md:-mt-10">
-      {/* Full-bleed hero with brand image */}
-      <section className="relative min-h-[85vh] overflow-hidden">
+    <div className="w-full">
+      <section className="relative min-h-[min(78vh,44rem)] w-full overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/brand/paylane-hero-lanes.png"
@@ -16,8 +15,8 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent" />
         <div className="lane-rail lane-animated absolute bottom-0 left-0 right-0 h-1.5" />
 
-        <div className="relative mx-auto flex min-h-[85vh] max-w-6xl flex-col justify-center px-4 py-20 pb-28 md:pb-32">
-          <p className="animate-rise font-display text-5xl font-bold tracking-tight text-[var(--ink)] md:text-7xl">
+        <div className="relative mx-auto flex min-h-[min(78vh,44rem)] w-full max-w-7xl flex-col justify-center px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
+          <p className="animate-rise font-display text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl md:text-7xl">
             Paylane
           </p>
           <h1 className="animate-rise-delay mt-5 max-w-2xl font-display text-2xl font-semibold leading-snug text-[var(--ink-soft)] md:text-3xl">
@@ -41,7 +40,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-20 pt-20 md:pt-24">
+      <section className="mx-auto w-full max-w-7xl px-4 pb-20 pt-20 sm:px-6 md:pt-24 lg:px-8">
         <h2 className="font-display text-2xl font-semibold">How money moves</h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
           Two products, two rulebooks — never mixed. Pick the lane that matches your work.
@@ -103,7 +102,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-20 pt-4">
+      <section className="mx-auto w-full max-w-7xl px-4 pb-20 pt-4 sm:px-6 lg:px-8">
         <h2 className="font-display mb-8 text-2xl font-semibold">Typical escrow journey</h2>
         <StepRail
           steps={[
@@ -127,7 +126,7 @@ export default function HomePage() {
         />
       </section>
 
-      <section className="mx-auto max-w-6xl space-y-8 px-4 pb-20 pt-4">
+      <section className="mx-auto w-full max-w-7xl space-y-8 px-4 pb-20 pt-4 sm:px-6 lg:px-8">
         <h2 className="font-display text-2xl font-semibold">Explore Paylane</h2>
         <QuickLinks
           links={[
@@ -141,7 +140,7 @@ export default function HomePage() {
         />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-24 pt-4">
+      <section className="mx-auto w-full max-w-7xl px-4 pb-24 pt-4 sm:px-6 lg:px-8">
         <div className="card flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="font-display text-xl font-semibold">Built for Arc and Base</h2>

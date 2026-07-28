@@ -6,6 +6,7 @@ import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { ChainSwitcher } from "@/components/ChainSwitcher";
+import { MobileNav } from "@/components/MobileNav";
 import { isSupportedChainId } from "@/lib/chain-client";
 import { NotificationBell } from "@/components/NotificationBell";
 
@@ -43,6 +44,11 @@ export function Header() {
   const { switchChain } = useSwitchChain();
   const [session, setSession] = useState<{ walletAddress?: string; isAdmin?: boolean } | null>(null);
   const [cfg, setCfg] = useState<PublicCfg | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     fetch("/api/config")
@@ -116,21 +122,74 @@ export function Header() {
     { href: "/settings", label: "Settings" },
   ];
   const links = mode === "api" ? apiLinks : hireLinks;
-  const supported = cfg?.supportedChains ?? [];
-  const wrongNetwork =
-    isConnected && chainId != null && supported.length > 0 && !isSupportedChainId(chainId);
+
+  function renderWalletActions() {
+    if (!mounted) {
+      return (
+        <button type="button" disabled className="btn-primary shrink-0 text-sm opacity-70">
+          Connect wallet
+        </button>
+      );
+    }
+
+    if (!isConnected) {
+      return (
+        <button
+          type="button"
+          onClick={() => connect({ connector: connectors[0] })}
+          disabled={isPending}
+          className="btn-primary shrink-0 text-sm"
+        >
+          Connect wallet
+        </button>
+      );
+    }
+
+    if (!session) {
+      return (
+        <button type="button" onClick={signIn} className="btn-primary shrink-0 text-sm">
+          Sign in
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex shrink-0 items-center gap-2 text-xs">
+        <NotificationBell />
+        <span className="hidden rounded-lg bg-[var(--surface-2)] px-2 py-1 font-mono sm:inline">
+          {session.walletAddress?.slice(0, 6)}…{session.walletAddress?.slice(-4)}
+        </span>
+        {session.isAdmin && (
+          <Link href="/admin/disputes" className="font-semibold text-[var(--brand)]">
+            Admin
+          </Link>
+        )}
+        <button
+          type="button"
+          onClick={() => {
+            fetch("/api/auth/logout", { method: "POST" });
+            disconnect();
+            setSession(null);
+          }}
+          className="btn-ghost text-xs"
+        >
+          Out
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--surface)]/85 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
-        <div className="flex items-center gap-5">
-          <Link href="/" className="group flex items-center gap-2">
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--surface)] shadow-sm">
+      <div className="relative mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <Link href="/" className="group flex shrink-0 items-center gap-2">
             <span className="lane-rail lane-animated h-7 w-7 rounded-lg" aria-hidden />
             <span className="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
               Paylane
             </span>
           </Link>
-          <nav className="hidden items-center gap-1 text-sm md:flex">
+          <nav className="hidden min-w-0 items-center gap-1 text-sm lg:flex">
             {links.map((l) => (
               <Link
                 key={l.href}
@@ -157,14 +216,15 @@ export function Header() {
               Docs
             </Link>
           </nav>
+          <MobileNav links={links} />
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <div className="hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)] p-0.5 text-xs sm:flex">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <div className="hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)] p-0.5 text-xs md:flex">
             <Link
               href="/jobs"
               className={clsx(
-                "rounded-full px-3 py-1.5 font-medium",
+                "rounded-full px-2.5 py-1.5 font-medium",
                 mode === "hire" && "bg-[var(--ink)] text-white",
               )}
             >
@@ -173,7 +233,7 @@ export function Header() {
             <Link
               href="/agents"
               className={clsx(
-                "rounded-full px-3 py-1.5 font-medium",
+                "rounded-full px-2.5 py-1.5 font-medium",
                 mode === "api" && "bg-[var(--ink)] text-white",
               )}
             >
@@ -181,23 +241,11 @@ export function Header() {
             </Link>
           </div>
 
-          {cfg && (
-            <ChainSwitcher chains={cfg.supportedChains} />
-          )}
-
-          {wrongNetwork && supported[0] && (
-            <button
-              type="button"
-              className="badge badge-warn sm:hidden"
-              onClick={() => switchChain({ chainId: supported[0].chainId })}
-            >
-              Switch network
-            </button>
-          )}
+          {mounted && cfg && <ChainSwitcher chains={cfg.supportedChains} />}
 
           {cfg?.demoMode && !session && (
             <select
-              className="max-w-[8.5rem] rounded-lg border border-[var(--border)] bg-transparent px-2 py-1.5 text-xs"
+              className="hidden max-w-[7.5rem] rounded-lg border border-[var(--border)] bg-transparent px-2 py-1.5 text-xs sm:block"
               defaultValue=""
               onChange={(e) => {
                 if (e.target.value) void demoLogin(e.target.value);
@@ -215,43 +263,7 @@ export function Header() {
             </select>
           )}
 
-          {!isConnected ? (
-            <button
-              type="button"
-              onClick={() => connect({ connector: connectors[0] })}
-              disabled={isPending}
-              className="btn-primary text-sm"
-            >
-              Connect wallet
-            </button>
-          ) : !session ? (
-            <button type="button" onClick={signIn} className="btn-primary text-sm">
-              Sign in
-            </button>
-          ) : (
-            <div className="flex items-center gap-2 text-xs">
-              <NotificationBell />
-              <span className="hidden rounded-lg bg-[var(--surface-2)] px-2 py-1 font-mono sm:inline">
-                {session.walletAddress?.slice(0, 6)}…{session.walletAddress?.slice(-4)}
-              </span>
-              {session.isAdmin && (
-                <Link href="/admin/disputes" className="font-semibold text-[var(--brand)]">
-                  Admin
-                </Link>
-              )}
-              <button
-                type="button"
-                onClick={() => {
-                  fetch("/api/auth/logout", { method: "POST" });
-                  disconnect();
-                  setSession(null);
-                }}
-                className="btn-ghost text-xs"
-              >
-                Out
-              </button>
-            </div>
-          )}
+          {renderWalletActions()}
         </div>
       </div>
     </header>

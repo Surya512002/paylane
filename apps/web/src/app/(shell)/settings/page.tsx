@@ -71,7 +71,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-10">
+    <div className="mx-auto w-full min-w-0 max-w-2xl space-y-10">
       <PageHero
         eyebrow="Network"
         title="Settings & live status"
@@ -80,8 +80,8 @@ export default function SettingsPage() {
         imageAlt=""
       />
 
-      <div className="card space-y-3 text-sm">
-        <div className="flex items-center justify-between">
+      <div className="card min-w-0 space-y-3 overflow-hidden text-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-display text-lg font-semibold">Server default chain</h2>
           <span
             className={
@@ -123,7 +123,7 @@ export default function SettingsPage() {
         </button>
       </div>
 
-      <div className="card space-y-3 text-sm">
+      <div className="card min-w-0 space-y-3 overflow-hidden text-sm">
         <h2 className="font-display text-lg font-semibold">Supported chains</h2>
         <p className="text-[var(--muted)]">
           Your wallet can switch between these networks in the header. Each needs its own escrow
@@ -131,7 +131,7 @@ export default function SettingsPage() {
         </p>
         <ul className="space-y-3">
           {cfg.supportedChains.map((c) => (
-            <li key={c.key} className="rounded-xl border border-[var(--border)] p-3">
+            <li key={c.key} className="min-w-0 overflow-hidden rounded-xl border border-[var(--border)] p-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="font-semibold">{c.name}</p>
                 <span className={c.live ? "badge badge-ok" : "badge badge-muted"}>
@@ -175,9 +175,15 @@ export default function SettingsPage() {
 
 function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
-    <p className="flex flex-col gap-0.5 sm:flex-row sm:justify-between">
-      <span className="text-[var(--muted)]">{label}</span>
-      <span className={mono ? "break-all font-mono text-xs" : "font-medium"}>{value}</span>
+    <p className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <span className="shrink-0 text-[var(--muted)]">{label}</span>
+      <span
+        className={
+          mono ? "min-w-0 break-all font-mono text-xs sm:max-w-[65%] sm:text-right" : "min-w-0 font-medium"
+        }
+      >
+        {value}
+      </span>
     </p>
   );
 }

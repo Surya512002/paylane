@@ -10,6 +10,7 @@ const wagmiConfig = createConfig({
   chains: wagmiChains,
   connectors: [injected()],
   transports: wagmiTransports,
+  ssr: true,
 });
 
 export function Providers({ children }: { children: ReactNode }) {

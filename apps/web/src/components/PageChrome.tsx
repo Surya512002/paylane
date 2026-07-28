@@ -32,14 +32,14 @@ export function PageHero({
         {actions && <div className="mt-6 flex flex-wrap gap-2">{actions}</div>}
       </div>
       {imageSrc && (
-        <div className="relative min-h-[160px] md:min-h-full">
+        <div className="relative flex min-h-[11rem] items-center justify-center bg-[var(--surface-2)]/60 md:min-h-[14rem]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageSrc}
             alt={imageAlt ?? ""}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="h-full max-h-52 w-full object-contain p-4 md:max-h-none md:min-h-[14rem] md:object-cover md:object-center md:p-0"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--surface)] via-transparent to-transparent md:from-[var(--surface)]/80" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[var(--surface)] via-[var(--surface)]/40 to-transparent md:from-[var(--surface)]/90 md:via-[var(--surface)]/30" />
         </div>
       )}
     </div>

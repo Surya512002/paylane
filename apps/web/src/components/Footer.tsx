@@ -3,7 +3,7 @@ import Link from "next/link";
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-[var(--border)] bg-[var(--ink)] text-white">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-[1.4fr_1fr]">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.4fr_1fr] lg:px-8">
         <div>
           <div className="flex items-center gap-2">
             <span className="lane-rail h-6 w-6 rounded-md" aria-hidden />
@@ -36,7 +36,7 @@ export function Footer() {
         </nav>
       </div>
       <div className="border-t border-white/10">
-        <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-white/45">
+        <p className="mx-auto max-w-7xl px-4 py-4 text-xs text-white/45 sm:px-6 lg:px-8">
           © {new Date().getFullYear()} Paylane · Arc network configurable via env (testnet → mainnet)
         </p>
       </div>

@@ -12,6 +12,10 @@ type ChainOption = {
   live: boolean;
 };
 
+function shortName(name: string) {
+  return name.replace(" Testnet", "").replace(" Sepolia", "").replace(" Mainnet", "");
+}
+
 export function ChainSwitcher({
   chains,
   compact,
@@ -30,48 +34,43 @@ export function ChainSwitcher({
         className={clsx("badge hidden sm:inline-flex", compact ? "badge-brand" : "badge-brand")}
         title={`Chain ID ${chainId ?? chains[0]?.chainId}`}
       >
-        {label}
+        {shortName(label)}
       </span>
     );
   }
 
   const wrongNetwork = chainId != null && !isSupportedChainId(chainId);
+  const selectValue = wrongNetwork ? "" : String(chainId ?? "");
 
   return (
-    <div className="flex items-center gap-1.5">
-      <select
-        className={clsx(
-          "rounded-lg border bg-transparent px-2 py-1.5 text-xs font-medium",
-          wrongNetwork
-            ? "border-amber-400 text-amber-900"
-            : "border-[var(--border)] text-[var(--ink-soft)]",
-        )}
-        value={chainId ?? ""}
-        disabled={isPending}
-        onChange={(e) => {
-          const next = Number(e.target.value);
-          if (Number.isFinite(next)) switchChain({ chainId: next });
-        }}
-        aria-label="Select network"
-      >
-        {!chainId && <option value="">Network…</option>}
-        {chains.map((c) => (
-          <option key={c.key} value={c.chainId}>
-            {c.name}
-            {c.live ? " · live" : ""}
-          </option>
-        ))}
-      </select>
-      {wrongNetwork && (
-        <button
-          type="button"
-          className="badge badge-warn"
-          onClick={() => switchChain({ chainId: chains[0].chainId })}
-        >
-          Switch
-        </button>
+    <select
+      className={clsx(
+        "max-w-[6.5rem] shrink truncate rounded-lg border bg-transparent px-2 py-1.5 text-xs font-medium sm:max-w-[8.5rem]",
+        wrongNetwork
+          ? "border-amber-400 text-amber-900"
+          : "border-[var(--border)] text-[var(--ink-soft)]",
       )}
-    </div>
+      value={selectValue}
+      disabled={isPending}
+      onChange={(e) => {
+        const next = Number(e.target.value);
+        if (Number.isFinite(next)) switchChain({ chainId: next });
+      }}
+      aria-label={wrongNetwork ? "Wrong network — pick Arc or Base" : "Select network"}
+    >
+      {wrongNetwork && (
+        <option value="" disabled>
+          Wrong network
+        </option>
+      )}
+      {!chainId && !wrongNetwork && <option value="">Network…</option>}
+      {chains.map((c) => (
+        <option key={c.key} value={c.chainId}>
+          {shortName(c.name)}
+          {c.live ? " · live" : ""}
+        </option>
+      ))}
+    </select>
   );
 }
 
