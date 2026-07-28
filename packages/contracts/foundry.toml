@@ -8,6 +8,8 @@ optimizer_runs = 200
 
 [rpc_endpoints]
 arc_testnet = "${ARC_RPC}"
+base_sepolia = "${BASE_SEPOLIA_RPC:-https://sepolia.base.org}"
+base = "${BASE_RPC:-https://mainnet.base.org}"
 
 [etherscan]
 # Configure Arc explorer verification when available

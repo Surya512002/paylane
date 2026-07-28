@@ -9,10 +9,12 @@ import {
 } from "wagmi";
 import { keccak256, stringToHex, encodeEventTopics, decodeEventLog, type Hash } from "viem";
 import { escrowAbi, erc20Abi } from "@/lib/escrowAbi";
+import { minorToChainUnits } from "@/lib/networks";
 
 type Cfg = {
   escrowAddress: `0x${string}` | null;
   usdcAddress: `0x${string}`;
+  usdcDecimals: number;
   demoMode: boolean;
 };
 
@@ -43,12 +45,14 @@ export function useEscrowActions(cfg: Cfg | null) {
       const { escrow, usdc, account } = ensureLive();
       if (!publicClient) throw new Error("RPC not ready");
 
+      const onChainAmount = minorToChainUnits(params.amountMinor, cfg!.usdcDecimals);
+
       setPending("Approving USDC…");
       const approveHash = await writeContractAsync({
         address: usdc,
         abi: erc20Abi,
         functionName: "approve",
-        args: [escrow, params.amountMinor],
+        args: [escrow, onChainAmount],
       });
       await publicClient.waitForTransactionReceipt({ hash: approveHash });
 
@@ -61,7 +65,7 @@ export function useEscrowActions(cfg: Cfg | null) {
         args: [
           jobRef,
           params.worker ?? "0x0000000000000000000000000000000000000000",
-          params.amountMinor,
+          onChainAmount,
           BigInt(params.deadlineUnix ?? 0),
         ],
       });

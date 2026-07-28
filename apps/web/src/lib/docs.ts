@@ -20,6 +20,8 @@ const SECTION_MAP: Record<string, DocSection> = {
   CONTRACT_SPEC: "Developers/Agents",
   STATE_MACHINE: "Developers/Agents",
   ARC_TESTNET_GUIDE: "Developers/Agents",
+  NETWORKS: "Developers/Agents",
+  VERCEL_ENV: "Developers/Agents",
   DISPUTE_POLICY: "Trust & Safety",
   SAFETY_AND_PROTECTIONS: "Trust & Safety",
   RISK_DISCLOSURE: "Trust & Safety",

@@ -21,11 +21,11 @@ export default function HomePage() {
             Paylane
           </p>
           <h1 className="animate-rise-delay mt-5 max-w-2xl font-display text-2xl font-semibold leading-snug text-[var(--ink-soft)] md:text-3xl">
-            The USDC lane for work and agents on Arc.
+            The USDC lane for work and agents on Arc and Base.
           </h1>
           <p className="animate-rise-delay-2 mt-4 max-w-xl text-base text-[var(--muted)] md:text-lg">
             Escrow protects freelance jobs. Instant x402 pay unlocks APIs. One wallet, clear rules,
-            receipts you can audit on Arc Testnet today.
+            and receipts on Arc Testnet or Base Sepolia today.
           </p>
           <div className="animate-rise-delay-2 mt-9 flex flex-wrap gap-3">
             <Link href="/jobs/new" className="btn-primary">
@@ -135,7 +135,7 @@ export default function HomePage() {
             { href: "/receipts", label: "Receipts", desc: "Unified ledger for jobs & API pays" },
             { href: "/trust", label: "Trust Center", desc: "Money rules, disputes, risk" },
             { href: "/settings", label: "Settings", desc: "Network, escrow address, LIVE vs demo" },
-            { href: "/docs/arc-testnet-guide", label: "Arc Testnet guide", desc: "Deploy & go live" },
+            { href: "/docs/networks", label: "Arc + Base networks", desc: "Multi-chain env & deploy" },
             { href: "/docs/for-officials", label: "For officials", desc: "Arc / Circle alignment" },
           ]}
         />
@@ -144,10 +144,10 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 pb-24 pt-4">
         <div className="card flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="font-display text-xl font-semibold">Built for Arc. Ready for mainnet.</h2>
+            <h2 className="font-display text-xl font-semibold">Built for Arc and Base</h2>
             <p className="mt-2 max-w-xl text-sm text-[var(--muted)]">
-              Escrow is live on Arc Testnet via an upgradeable proxy. Flip env to mainnet when Arc
-              ships — same app, new addresses.
+              Escrow is live on Arc Testnet via an upgradeable proxy. Add Base Sepolia from the
+              header network menu — deploy escrow per chain, same app.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">

@@ -1,44 +1,58 @@
 import {
   createPublicClient,
-  defineChain,
   http,
   decodeEventLog,
   type Hash,
   type Log,
 } from "viem";
-import { config } from "./config";
+import { config, getChainConfig } from "./config";
+import { chainPresetToViem, minorToChainUnits } from "./networks";
 import { escrowAbi } from "./escrowAbi";
 
-export const arcChain = defineChain({
-  id: config.chainId,
-  name: config.chainName,
-  nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
-  rpcUrls: { default: { http: [config.arcRpc] } },
-  blockExplorers: { default: { name: "Arcscan", url: config.explorerUrl } },
-});
-
-export const arcTestnet = arcChain;
-
-export const publicClient = createPublicClient({
-  chain: arcChain,
-  transport: http(config.arcRpc),
-});
-
 export { escrowAbi } from "./escrowAbi";
+
+const clients = new Map<number, ReturnType<typeof createPublicClient>>();
+
+export function getPublicClient(chainId = config.chainId) {
+  let client = clients.get(chainId);
+  if (!client) {
+    const preset = getChainConfig(chainId);
+    client = createPublicClient({
+      chain: chainPresetToViem(preset),
+      transport: http(preset.rpcUrl),
+    });
+    clients.set(chainId, client);
+  }
+  return client;
+}
+
+/** @deprecated use getPublicClient() */
+export const publicClient = getPublicClient(config.chainId);
+
+/** @deprecated use chainPresetToViem(getChainConfig()) */
+export const arcChain = chainPresetToViem(config.activeChain);
+export const arcTestnet = arcChain;
 
 export function isAdminWallet(address: string): boolean {
   return config.adminWallets.includes(address.toLowerCase());
 }
 
-export async function verifyFundTx(txHash: Hash, expectedAmount: bigint): Promise<
-  { ok: true; onchainJobId?: string } | { ok: false; reason: string }
-> {
+export async function verifyFundTx(
+  txHash: Hash,
+  expectedAmountMinor: bigint,
+  chainId = config.chainId,
+): Promise<{ ok: true; onchainJobId?: string } | { ok: false; reason: string }> {
   if (config.demoMode) return { ok: true };
-  if (!config.escrowAddress) return { ok: false, reason: "Escrow not configured" };
 
-  const receipt = await publicClient.getTransactionReceipt({ hash: txHash });
+  const chain = getChainConfig(chainId);
+  if (!chain.escrowAddress) return { ok: false, reason: "Escrow not configured for this chain" };
+
+  const client = getPublicClient(chainId);
+  const expectedOnChain = minorToChainUnits(expectedAmountMinor, chain.usdcDecimals);
+
+  const receipt = await client.getTransactionReceipt({ hash: txHash });
   if (receipt.status !== "success") return { ok: false as const, reason: "Tx failed" };
-  if (receipt.to?.toLowerCase() !== config.escrowAddress.toLowerCase()) {
+  if (receipt.to?.toLowerCase() !== chain.escrowAddress.toLowerCase()) {
     return { ok: false as const, reason: "Tx not sent to Paylane escrow" };
   }
 
@@ -51,7 +65,7 @@ export async function verifyFundTx(txHash: Hash, expectedAmount: bigint): Promis
       });
       if (decoded.eventName === "JobFunded") {
         const amount = decoded.args.amount as bigint;
-        if (amount !== expectedAmount) {
+        if (amount !== expectedOnChain) {
           return { ok: false as const, reason: "Funded amount mismatch" };
         }
         return {

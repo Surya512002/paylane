@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { arcChain } from "@/lib/chain-client";
+import { ChainSwitcher } from "@/components/ChainSwitcher";
+import { isSupportedChainId } from "@/lib/chain-client";
 import { NotificationBell } from "@/components/NotificationBell";
 
 type AppMode = "hire" | "api";
@@ -15,6 +16,13 @@ type PublicCfg = {
   networkId: string;
   demoMode: boolean;
   faucetUrl?: string | null;
+  supportedChains: Array<{
+    key: string;
+    chainId: number;
+    name: string;
+    family: string;
+    live: boolean;
+  }>;
 };
 
 function useAppMode(): AppMode {
@@ -63,9 +71,12 @@ export function Header() {
 
   async function signIn() {
     if (!address) return;
-    if (chainId !== arcChain.id) {
+    const supported = cfg?.supportedChains ?? [];
+    const targetChainId =
+      chainId && isSupportedChainId(chainId) ? chainId : supported[0]?.chainId;
+    if (targetChainId != null && chainId !== targetChainId) {
       try {
-        await switchChain({ chainId: arcChain.id });
+        await switchChain({ chainId: targetChainId });
       } catch {
         /* user may reject; continue */
       }
@@ -73,7 +84,7 @@ export function Header() {
     const nonceRes = await fetch("/api/auth/nonce", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address }),
+      body: JSON.stringify({ address, chainId: targetChainId ?? chainId }),
     });
     const { message } = await nonceRes.json();
     const sig = await (
@@ -105,7 +116,9 @@ export function Header() {
     { href: "/settings", label: "Settings" },
   ];
   const links = mode === "api" ? apiLinks : hireLinks;
-  const wrongNetwork = isConnected && chainId != null && chainId !== arcChain.id;
+  const supported = cfg?.supportedChains ?? [];
+  const wrongNetwork =
+    isConnected && chainId != null && supported.length > 0 && !isSupportedChainId(chainId);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--surface)]/85 backdrop-blur-md">
@@ -169,22 +182,14 @@ export function Header() {
           </div>
 
           {cfg && (
-            <span
-              className={clsx(
-                "badge hidden sm:inline-flex",
-                cfg.networkId === "mainnet" ? "badge-ok" : "badge-brand",
-              )}
-              title={`Chain ID ${arcChain.id}`}
-            >
-              {cfg.chainName}
-            </span>
+            <ChainSwitcher chains={cfg.supportedChains} />
           )}
 
-          {wrongNetwork && (
+          {wrongNetwork && supported[0] && (
             <button
               type="button"
-              className="badge badge-warn"
-              onClick={() => switchChain({ chainId: arcChain.id })}
+              className="badge badge-warn sm:hidden"
+              onClick={() => switchChain({ chainId: supported[0].chainId })}
             >
               Switch network
             </button>

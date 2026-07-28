@@ -1,23 +1,33 @@
-import { defineChain } from "viem";
+import { http, type Chain } from "viem";
+import {
+  resolveActiveChain,
+  resolveSupportedChains,
+  chainPresetToViem,
+} from "./networks";
 
-const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? 5042002);
-const name = process.env.NEXT_PUBLIC_CHAIN_NAME ??
-  ((process.env.NEXT_PUBLIC_NETWORK ?? "testnet") === "mainnet" ? "Arc" : "Arc Testnet");
-const rpc = process.env.NEXT_PUBLIC_ARC_RPC ?? "https://rpc.testnet.arc.network";
-const explorer = process.env.NEXT_PUBLIC_EXPLORER_URL ?? "https://testnet.arcscan.app";
+export const activeChainPreset = resolveActiveChain();
+export const supportedChainPresets = resolveSupportedChains();
 
-/** Active Arc chain for wagmi — driven entirely by env / NEXT_PUBLIC_NETWORK. */
-export const arcChain = defineChain({
-  id: chainId,
-  name,
-  nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
-  rpcUrls: {
-    default: { http: [rpc] },
-  },
-  blockExplorers: {
-    default: { name: "Arcscan", url: explorer },
-  },
-});
+export const supportedChains: readonly Chain[] = supportedChainPresets.map(chainPresetToViem);
+export const activeChain: Chain = chainPresetToViem(activeChainPreset);
 
-/** @deprecated use arcChain */
-export const arcTestnet = arcChain;
+/** @deprecated use activeChain */
+export const arcChain = activeChain;
+/** @deprecated use activeChain */
+export const arcTestnet = activeChain;
+
+export function buildWagmiTransports(chains: readonly Chain[]) {
+  return Object.fromEntries(
+    chains.map((c) => {
+      const preset = supportedChainPresets.find((p) => p.chainId === c.id);
+      return [c.id, http(preset?.rpcUrl ?? c.rpcUrls.default.http[0])];
+    }),
+  );
+}
+
+export const wagmiTransports = buildWagmiTransports(supportedChains);
+
+export function isSupportedChainId(chainId: number | undefined): boolean {
+  if (chainId == null) return false;
+  return supportedChains.some((c) => c.id === chainId);
+}

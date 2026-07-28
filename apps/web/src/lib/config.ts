@@ -1,5 +1,5 @@
 import { DEFAULTS } from "@workpay/shared";
-import { resolveNetwork } from "./networks";
+import { resolveActiveChain, resolveSupportedChains, type ChainPreset } from "./networks";
 
 function envBool(key: string, fallback: boolean): boolean {
   const v = process.env[key];
@@ -14,7 +14,8 @@ function envInt(key: string, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
-const network = resolveNetwork();
+const activeChain = resolveActiveChain();
+const supportedChains = resolveSupportedChains();
 const isProd = process.env.NODE_ENV === "production";
 
 /** DEMO_MODE defaults false in production builds; true locally for faster onboarding. */
@@ -23,15 +24,22 @@ const demoMode = envBool("DEMO_MODE", !isProd);
 export const config = {
   appName: "Paylane",
   databaseUrl: process.env.DATABASE_URL ?? "",
-  network,
-  networkId: network.id,
-  chainId: network.chainId,
-  chainName: network.name,
-  arcRpc: network.rpcUrl,
-  usdcAddress: network.usdcAddress,
-  escrowAddress: network.escrowAddress,
-  explorerUrl: network.explorerUrl,
-  faucetUrl: network.faucetUrl,
+  activeChain,
+  supportedChains,
+  /** @deprecated use activeChain */
+  network: activeChain,
+  networkId: activeChain.key,
+  chainId: activeChain.chainId,
+  chainName: activeChain.name,
+  chainRpc: activeChain.rpcUrl,
+  /** @deprecated use chainRpc */
+  arcRpc: activeChain.rpcUrl,
+  usdcAddress: activeChain.usdcAddress,
+  usdcDecimals: activeChain.usdcDecimals,
+  escrowAddress: activeChain.escrowAddress,
+  explorerUrl: activeChain.explorerUrl,
+  explorerName: activeChain.explorerName,
+  faucetUrl: activeChain.faucetUrl,
   platformFeeBps: envInt("PLATFORM_FEE_BPS", DEFAULTS.platformFeeBps),
   reviewWindowHours: envInt("REVIEW_WINDOW_HOURS", DEFAULTS.reviewWindowHours),
   revisionLimit: envInt("REVISION_LIMIT", DEFAULTS.revisionLimit),
@@ -47,7 +55,24 @@ export const config = {
 } as const;
 
 if (!demoMode && !config.escrowAddress) {
-  console.warn("[Paylane] DEMO_MODE=false but NEXT_PUBLIC_ESCROW_ADDRESS is unset");
+  console.warn("[Paylane] DEMO_MODE=false but escrow is unset for the active chain");
+}
+
+function publicChain(preset: ChainPreset) {
+  return {
+    key: preset.key,
+    chainId: preset.chainId,
+    name: preset.name,
+    family: preset.family,
+    usdcAddress: preset.usdcAddress,
+    usdcDecimals: preset.usdcDecimals,
+    escrowAddress: preset.escrowAddress ?? null,
+    explorerUrl: preset.explorerUrl,
+    explorerName: preset.explorerName,
+    faucetUrl: preset.faucetUrl ?? null,
+    isTestnet: preset.isTestnet,
+    live: !demoMode && Boolean(preset.escrowAddress),
+  };
 }
 
 export function publicConfig() {
@@ -60,10 +85,18 @@ export function publicConfig() {
     chainId: config.chainId,
     chainName: config.chainName,
     networkId: config.networkId,
+    activeChainKey: config.activeChain.key,
     usdcAddress: config.usdcAddress,
+    usdcDecimals: config.usdcDecimals,
     escrowAddress: config.escrowAddress ?? null,
     explorerUrl: config.explorerUrl,
+    explorerName: config.explorerName,
     faucetUrl: config.faucetUrl ?? null,
     demoMode: config.demoMode,
+    supportedChains: config.supportedChains.map(publicChain),
   };
+}
+
+export function getChainConfig(chainId: number) {
+  return config.supportedChains.find((c) => c.chainId === chainId) ?? config.activeChain;
 }

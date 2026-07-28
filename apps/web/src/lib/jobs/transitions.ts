@@ -141,7 +141,17 @@ export async function applyJobTransition(
           throw new TransitionError("txHash and onchainJobId required");
         }
         if (!config.demoMode && txHash) {
-          const v = await verifyFundTx(txHash as `0x${string}`, job.amountMinor);
+          const fundChainId =
+            typeof payload.chainId === "number"
+              ? payload.chainId
+              : typeof payload.chainId === "string"
+                ? Number(payload.chainId)
+                : config.chainId;
+          const v = await verifyFundTx(
+            txHash as `0x${string}`,
+            job.amountMinor,
+            Number.isFinite(fundChainId) ? fundChainId : config.chainId,
+          );
           if (!v.ok) throw new TransitionError(v.reason ?? "Fund verification failed");
           if (v.onchainJobId) onchainJobId = v.onchainJobId;
         }

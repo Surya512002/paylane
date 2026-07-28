@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { useAccount } from "wagmi";
 import { formatDistanceToNow } from "date-fns";
 import { useEscrowActions } from "@/hooks/useEscrowActions";
+import { resolveWalletChainConfig } from "@/components/ChainSwitcher";
 
 interface JobDetail {
   id: string;
@@ -32,15 +33,24 @@ type Cfg = {
   demoMode: boolean;
   escrowAddress?: string | null;
   usdcAddress: string;
+  usdcDecimals?: number;
   reviewWindowHours: number;
   revisionLimit: number;
   platformFeeBps: number;
   explorerUrl: string;
+  explorerName?: string;
+  supportedChains: Array<{
+    key: string;
+    chainId: number;
+    name: string;
+    family: string;
+    live: boolean;
+  }>;
 };
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const [job, setJob] = useState<JobDetail | null>(null);
   const [me, setMe] = useState<{ id: string; walletAddress: string } | null>(null);
   const [cfg, setCfg] = useState<Cfg | null>(null);
@@ -50,14 +60,24 @@ export default function JobDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
+  const walletChain = resolveWalletChainConfig(chainId, cfg?.supportedChains ?? []);
+
   const escrow = useEscrowActions(
-    cfg
+    walletChain
       ? {
-          escrowAddress: (cfg.escrowAddress as `0x${string}` | null) ?? null,
-          usdcAddress: cfg.usdcAddress as `0x${string}`,
-          demoMode: cfg.demoMode,
+          escrowAddress: (walletChain.escrowAddress as `0x${string}` | null) ?? null,
+          usdcAddress: walletChain.usdcAddress as `0x${string}`,
+          usdcDecimals: walletChain.usdcDecimals,
+          demoMode: cfg?.demoMode ?? true,
         }
-      : null,
+      : cfg
+        ? {
+            escrowAddress: (cfg.escrowAddress as `0x${string}` | null) ?? null,
+            usdcAddress: cfg.usdcAddress as `0x${string}`,
+            usdcDecimals: cfg.usdcDecimals ?? 6,
+            demoMode: cfg.demoMode,
+          }
+        : null,
   );
 
   async function load() {
@@ -93,10 +113,11 @@ export default function JobDetailPage() {
 
   async function fundEscrow() {
     if (!job || !cfg) return;
+    const chainCfg = walletChain ?? cfg;
     setError(null);
     setStatusMsg(null);
     try {
-      if (!cfg.demoMode && cfg.escrowAddress) {
+      if (!cfg.demoMode && chainCfg.escrowAddress) {
         const deadlineUnix = job.deadlineAt
           ? Math.floor(new Date(job.deadlineAt).getTime() / 1000)
           : 0;
@@ -107,11 +128,15 @@ export default function JobDetailPage() {
         });
         if (result.mode === "live") {
           setStatusMsg(`Funded on-chain · ${result.txHash.slice(0, 10)}…`);
-          await act("fund", { txHash: result.txHash, onchainJobId: result.onchainJobId });
+          await act("fund", {
+            txHash: result.txHash,
+            onchainJobId: result.onchainJobId,
+            chainId: walletChain?.chainId,
+          });
           return;
         }
       }
-      await act("fund", {});
+      await act("fund", { chainId: walletChain?.chainId });
       setStatusMsg("Escrow funded (demo mode)");
     } catch (e) {
       setError((e as Error).message);
@@ -120,8 +145,9 @@ export default function JobDetailPage() {
 
   async function acceptRelease() {
     if (!job || !cfg) return;
+    const chainCfg = walletChain ?? cfg;
     try {
-      if (!cfg.demoMode && cfg.escrowAddress && job.onchainJobId) {
+      if (!cfg.demoMode && chainCfg.escrowAddress && job.onchainJobId) {
         const result = await escrow.acceptOnchain(job.onchainJobId);
         if (result.mode === "live") {
           await act("accept", { txHash: result.txHash });
@@ -137,9 +163,10 @@ export default function JobDetailPage() {
 
   async function submitDelivery() {
     if (!job || !cfg) return;
+    const chainCfg = walletChain ?? cfg;
     const note = deliverNote || "Delivery submitted";
     try {
-      if (!cfg.demoMode && cfg.escrowAddress && job.onchainJobId) {
+      if (!cfg.demoMode && chainCfg.escrowAddress && job.onchainJobId) {
         const result = await escrow.deliverOnchain(job.onchainJobId, note);
         if (result.mode === "live") {
           await act("deliver", {
@@ -163,7 +190,11 @@ export default function JobDetailPage() {
   const isWorker = me?.id === job.worker?.id;
   const fee = (Number(job.amountMinor) * (cfg?.platformFeeBps ?? 200)) / 10_000;
   const net = Number(job.amountMinor) - fee;
-  const live = Boolean(cfg && !cfg.demoMode && cfg.escrowAddress);
+  const live = Boolean(
+    cfg && !cfg.demoMode && (walletChain?.escrowAddress ?? cfg.escrowAddress),
+  );
+  const explorerLabel = walletChain?.explorerName ?? cfg?.explorerName ?? "Explorer";
+  const explorerUrl = walletChain?.explorerUrl ?? cfg?.explorerUrl;
 
   return (
     <div className="space-y-6">
@@ -235,7 +266,7 @@ export default function JobDetailPage() {
               href={
                 job.escrowTxHash.startsWith("demo:")
                   ? undefined
-                  : `${cfg?.explorerUrl}/tx/${job.escrowTxHash}`
+                  : `${explorerUrl}/tx/${job.escrowTxHash}`
               }
               target="_blank"
               rel="noreferrer"

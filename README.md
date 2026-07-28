@@ -1,6 +1,6 @@
 # Paylane
 
-USDC-native **work + payments** on Circle’s **Arc** blockchain.
+USDC-native **work + payments** on **Arc** and **Base**.
 
 - **Mode A** — Hire/Work escrow
 - **Mode B** — API/Agent x402 micropayments
@@ -16,6 +16,6 @@ npm run db:seed -w web
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Use the header network menu to switch between **Arc Testnet** and **Base Sepolia**.
 
-Full docs: [WORKPAY_README.md](./WORKPAY_README.md) and `docs/`.
+Multi-chain env & deploy: [docs/NETWORKS.md](./docs/NETWORKS.md)
