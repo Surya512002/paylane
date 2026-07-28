@@ -34,3 +34,5 @@ workpay/packages/contracts/broadcast/
 
 # Force-ignore Foundry broadcast (may contain deployer metadata)
 workpay/packages/contracts/broadcast/
+workpay/.agents/
+workpay/skills-lock.json
