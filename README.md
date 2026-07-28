@@ -1,15 +1,21 @@
 # Paylane
 
-USDC-native work + payments on Circle’s **Arc** blockchain.
+USDC-native **work + payments** on Circle’s **Arc** blockchain.
 
-The application monorepo lives in [`workpay/`](./workpay/).
+- **Mode A** — Hire/Work escrow
+- **Mode B** — API/Agent x402 micropayments
+
+## Quick start
 
 ```bash
-cd workpay
 cp apps/web/.env.example apps/web/.env
 npm install
+./scripts/pg-start.sh   # or: docker compose up -d
 npm run db:push -w web
+npm run db:seed -w web
 npm run dev
 ```
 
-See [workpay/README.md](./workpay/README.md) for Arc Testnet deploy, escrow, and Mode A/B docs.
+Open [http://localhost:3000](http://localhost:3000).
+
+Full docs: [WORKPAY_README.md](./WORKPAY_README.md) and `docs/`.

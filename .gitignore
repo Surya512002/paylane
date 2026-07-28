@@ -37,3 +37,24 @@ workpay/packages/contracts/broadcast/
 workpay/.agents/
 workpay/skills-lock.json
 .vercel
+
+# From former workpay/.gitignore
+node_modules/
+.next/
+.env
+.env.local
+dist/
+out/
+cache/
+broadcast/
+.tools/pgdata
+.tools/pg.log
+.tools/pg.jar
+.tools/pg-extract
+.tools/pg
+*.log
+coverage/
+.DS_Store
+.vercel
+.agents/
+skills-lock.json

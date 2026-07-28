@@ -3,10 +3,9 @@
 **/.tools
 **/cache
 **/out
-**/.git
-workpay/packages/contracts/lib
-workpay/packages/contracts/broadcast
-workpay/packages/contracts/out
-workpay/packages/contracts/cache
+packages/contracts/lib
+packages/contracts/broadcast
+packages/contracts/out
+packages/contracts/cache
 **/*.log
-workpay/.agents
+.agents
