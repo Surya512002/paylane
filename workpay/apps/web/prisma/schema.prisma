@@ -1,0 +1,302 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobStatus {
+  Draft
+  Published
+  Funded
+  Assigned
+  InProgress
+  Delivered
+  RevisionRequested
+  Accepted
+  Disputed
+  Resolved
+  AutoReleased
+  Cancelled
+  Expired
+}
+
+enum ReceiptType {
+  job
+  api
+}
+
+enum LedgerKind {
+  escrow_fund
+  escrow_release
+  escrow_refund
+  escrow_split
+  api_payment
+  api_credit
+  api_refund
+  platform_fee
+}
+
+model User {
+  id            String   @id @default(cuid())
+  walletAddress String   @unique
+  displayName   String?
+  email         String?
+  isAdmin       Boolean  @default(false)
+  reputation    Int      @default(100)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  jobsAsClient   Job[]           @relation("ClientJobs")
+  jobsAsWorker   Job[]           @relation("WorkerJobs")
+  deliveries     Delivery[]
+  disputesOpened Dispute[]       @relation("DisputeOpener")
+  reviewsGiven   Review[]        @relation("ReviewsGiven")
+  reviewsReceived Review[]       @relation("ReviewsReceived")
+  paidResources  PaidResource[]
+  usageEvents    UsageEvent[]
+  ledgerEntries  LedgerEntry[]
+  auditLogs      AuditLog[]
+  agentPolicy    AgentPolicy?
+  apiKeys        ApiKey[]
+  sessions       Session[]
+  credits        ApiCredit[]
+  notifications  Notification[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuthNonce {
+  id        String   @id @default(cuid())
+  address   String
+  nonce     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([address])
+}
+
+model Job {
+  id              String    @id @default(cuid())
+  title           String
+  description     String
+  amountMinor     BigInt
+  status          JobStatus @default(Draft)
+  checklist       String[]
+  deadlineAt      DateTime?
+  deliveredAt     DateTime?
+  reviewDeadline  DateTime?
+  revisionsUsed   Int       @default(0)
+  onchainJobId    BigInt?
+  escrowTxHash    String?
+  releaseTxHash   String?
+  deliveryHash    String?
+  clientId        String
+  workerId        String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  client     User       @relation("ClientJobs", fields: [clientId], references: [id])
+  worker     User?      @relation("WorkerJobs", fields: [workerId], references: [id])
+  deliveries Delivery[]
+  disputes   Dispute[]
+  reviews    Review[]
+  ledger     LedgerEntry[]
+
+  @@index([status])
+  @@index([clientId])
+  @@index([workerId])
+}
+
+model Delivery {
+  id           String   @id @default(cuid())
+  jobId        String
+  workerId     String
+  note         String?
+  artifactUrl  String?
+  artifactHash String?
+  contentType  String?
+  sizeBytes    Int?
+  createdAt    DateTime @default(now())
+
+  job    Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  worker User @relation(fields: [workerId], references: [id])
+}
+
+model Dispute {
+  id                 String    @id @default(cuid())
+  jobId              String
+  openerId           String
+  reason             String
+  status             String    @default("open")
+  evidenceDeadline   DateTime
+  workerAmountMinor  BigInt?
+  clientAmountMinor  BigInt?
+  rationale          String?
+  resolvedAt         DateTime?
+  resolvedById       String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  job    Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  opener User @relation("DisputeOpener", fields: [openerId], references: [id])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  jobId      String
+  fromId     String
+  toId       String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  from User @relation("ReviewsGiven", fields: [fromId], references: [id])
+  to   User @relation("ReviewsReceived", fields: [toId], references: [id])
+
+  @@unique([jobId, fromId])
+}
+
+model PaidResource {
+  id                 String   @id @default(cuid())
+  sellerId           String
+  name               String
+  path               String   @unique
+  description        String
+  priceMinor         BigInt
+  rateLimitPerMinute Int      @default(60)
+  enabled            Boolean  @default(true)
+  webhookSecret      String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  seller      User         @relation(fields: [sellerId], references: [id])
+  usageEvents UsageEvent[]
+  apiKeys     ApiKey[]
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  userId     String
+  resourceId String?
+  keyHash    String    @unique
+  label      String?
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource PaidResource? @relation(fields: [resourceId], references: [id])
+}
+
+model UsageEvent {
+  id              String   @id @default(cuid())
+  resourceId      String
+  buyerId         String?
+  buyerAddress    String
+  amountMinor     BigInt
+  status          String
+  idempotencyKey  String   @unique
+  paymentProof    String?
+  settlementRef   String?
+  httpStatus      Int?
+  createdAt       DateTime @default(now())
+
+  resource PaidResource @relation(fields: [resourceId], references: [id])
+  buyer    User?        @relation(fields: [buyerId], references: [id])
+
+  @@index([resourceId])
+  @@index([buyerAddress])
+}
+
+model LedgerEntry {
+  id            String     @id @default(cuid())
+  type          ReceiptType
+  kind          LedgerKind
+  amountMinor   BigInt
+  feeMinor      BigInt     @default(0)
+  status        String
+  counterparty  String?
+  txHash        String?
+  settlementRef String?
+  jobId         String?
+  userId        String?
+  metadata      Json?
+  createdAt     DateTime   @default(now())
+
+  job  Job? @relation(fields: [jobId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([entity, entityId])
+}
+
+model AdminDecision {
+  id        String   @id @default(cuid())
+  adminId   String
+  disputeId String
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+}
+
+model AgentPolicy {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  dailySpendCapMinor BigInt?
+  allowlistedHosts   String[]
+  paused             Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ApiCredit {
+  id           String   @id @default(cuid())
+  userId       String
+  amountMinor  BigInt
+  reason       String
+  usageEventId String?
+  consumed     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  href      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}

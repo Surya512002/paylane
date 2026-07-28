@@ -1,0 +1,16 @@
+node_modules
+.next
+.env
+.env.local
+dist
+out
+cache
+broadcast
+.tools/pgdata
+.tools/pg.log
+.tools/pg.jar
+.tools/pg-extract
+.tools/pg
+*.log
+coverage
+.DS_Store

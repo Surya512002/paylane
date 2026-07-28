@@ -1,0 +1,36 @@
+# Dependencies & build
+node_modules/
+.next/
+dist/
+out/
+cache/
+coverage/
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local tooling / data
+.tools/
+*.log
+.DS_Store
+
+# Vercel
+.vercel
+
+# Foundry
+workpay/packages/contracts/cache/
+workpay/packages/contracts/out/
+workpay/packages/contracts/broadcast/
+
+# Private key material never in git
+**/*.pem
+**/keystore/
+
+# Force-ignore Foundry broadcast (may contain deployer metadata)
+workpay/packages/contracts/broadcast/

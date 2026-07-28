@@ -1,0 +1,13 @@
+{
+  "network": "arc-testnet",
+  "chainId": 5042002,
+  "usdc": "0x3600000000000000000000000000000000000000",
+  "escrowProxy": "0x144762e02f9676593D955CF0d184323474C79805",
+  "implementation": "0x97D7daD7c1F932e6C3F2bDdddAB607A3243eD7a5",
+  "owner": "0x3799cafa388da047cAF7c999e31c844705FadfAe",
+  "feeRecipient": "0x3799cafa388da047cAF7c999e31c844705FadfAe",
+  "arbitrator": "0x3799cafa388da047cAF7c999e31c844705FadfAe",
+  "deployedAt": "2026-07-28T05:56:58Z",
+  "upgradeable": true,
+  "explorer": "https://testnet.arcscan.app/address/0x144762e02f9676593D955CF0d184323474C79805"
+}

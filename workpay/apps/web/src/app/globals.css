@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+:root {
+  /* Paylane — ink + cobalt lane, dollar-first light surface */
+  --ink: #0b1526;
+  --ink-soft: #1a2740;
+  --background: #f3f5f9;
+  --foreground: #0b1526;
+  --surface: #ffffff;
+  --surface-2: #eef2f8;
+  --brand: #1a5cff;
+  --brand-dark: #0f3fcc;
+  --brand-soft: #dbe7ff;
+  --accent: #00b89c;
+  --accent-soft: #d5f5ef;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --muted: #5b6b82;
+  --border: #d5dce8;
+  --shadow: 0 12px 40px rgba(11, 21, 38, 0.08);
+  --lane: linear-gradient(105deg, #1a5cff 0%, #00b89c 100%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-figtree);
+  --font-display: var(--font-syne);
+}
+
+body {
+  color: var(--foreground);
+  font-family: var(--font-figtree), system-ui, sans-serif;
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(26, 92, 255, 0.12), transparent 55%),
+    radial-gradient(900px 500px at 95% 0%, rgba(0, 184, 156, 0.1), transparent 50%),
+    linear-gradient(180deg, #eef3fb 0%, var(--background) 38%, #f7f8fb 100%);
+}
+
+.font-display {
+  font-family: var(--font-syne), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.lane-rail {
+  background: var(--lane);
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-xl bg-[var(--brand)] px-4 py-2.5 text-sm font-semibold text-white transition;
+  box-shadow: 0 8px 24px rgba(26, 92, 255, 0.25);
+}
+.btn-primary:hover {
+  background: var(--brand-dark);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold transition hover:border-[var(--brand)] hover:text-[var(--brand-dark)];
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-sm text-[var(--muted)] transition hover:bg-[var(--surface-2)] hover:text-[var(--ink)];
+}
+
+.card {
+  @apply rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5;
+  box-shadow: var(--shadow);
+}
+
+.card-quiet {
+  @apply rounded-2xl border border-[var(--border)] bg-[var(--surface)]/80 p-5 backdrop-blur;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+}
+
+.badge-brand {
+  background: var(--brand-soft);
+  color: var(--brand-dark);
+}
+
+.badge-ok {
+  background: var(--accent-soft);
+  color: #067a68;
+}
+
+.badge-warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-muted {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.input {
+  @apply w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm outline-none transition focus:border-[var(--brand)];
+}
+
+.label {
+  @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--muted)];
+}
+
+.prose-paylane h1 {
+  @apply font-display text-3xl font-semibold mb-4;
+}
+.prose-paylane h2 {
+  @apply font-display text-xl font-semibold mt-8 mb-3;
+}
+.prose-paylane p,
+.prose-paylane li {
+  @apply text-[var(--foreground)]/90 leading-relaxed;
+}
+.prose-paylane a {
+  @apply text-[var(--brand-dark)] underline;
+}
+
+@keyframes lane-shift {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise {
+  animation: rise-in 0.55s ease-out both;
+}
+.animate-rise-delay {
+  animation: rise-in 0.65s ease-out 0.12s both;
+}
+.animate-rise-delay-2 {
+  animation: rise-in 0.7s ease-out 0.22s both;
+}
+.section-title {
+  @apply font-display text-2xl font-semibold tracking-tight;
+}
+
+.lane-divider {
+  height: 3px;
+  background: var(--lane);
+  border-radius: 999px;
+  opacity: 0.85;
+}
