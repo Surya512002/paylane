@@ -12,4 +12,5 @@ base_sepolia = "${BASE_SEPOLIA_RPC:-https://sepolia.base.org}"
 base = "${BASE_RPC:-https://mainnet.base.org}"
 
 [etherscan]
-# Configure Arc explorer verification when available
+# Arc Testnet uses Blockscout via: forge verify-contract --verifier blockscout --verifier-url https://testnet.arcscan.app/api/
+# Base Sepolia uses ETHERSCAN_API_KEY with --verifier etherscan --chain base-sepolia
