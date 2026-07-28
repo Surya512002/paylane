@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { injected } from "wagmi/connectors/injected";
 import { arcChain } from "@/lib/chain-client";
 import { useState, type ReactNode } from "react";
 
