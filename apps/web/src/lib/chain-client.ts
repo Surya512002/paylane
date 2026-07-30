@@ -11,13 +11,11 @@ export const supportedChainPresets = resolveSupportedChains();
 export const supportedChains: readonly Chain[] = supportedChainPresets.map(chainPresetToViem);
 export const activeChain: Chain = chainPresetToViem(activeChainPreset);
 
-/** Wagmi requires a non-empty tuple of chains. */
-function asWagmiChains(chains: readonly Chain[]): readonly [Chain, ...Chain[]] {
-  if (chains.length === 0) return [activeChain];
-  return [chains[0], ...chains.slice(1)] as readonly [Chain, ...Chain[]];
-}
-
-export const wagmiChains = asWagmiChains(supportedChains);
+/** Wagmi requires a non-empty tuple of chains — never pass a plain Chain[]. */
+export const wagmiChains: readonly [Chain, ...Chain[]] =
+  supportedChains.length > 0
+    ? ([supportedChains[0], ...supportedChains.slice(1)] as readonly [Chain, ...Chain[]])
+    : ([activeChain] as const);
 
 /** @deprecated use activeChain */
 export const arcChain = activeChain;
@@ -33,9 +31,9 @@ export function buildWagmiTransports(chains: readonly Chain[]) {
   );
 }
 
-export const wagmiTransports = buildWagmiTransports(supportedChains);
+export const wagmiTransports = buildWagmiTransports([...wagmiChains]);
 
 export function isSupportedChainId(chainId: number | undefined): boolean {
   if (chainId == null) return false;
-  return supportedChains.some((c) => c.id === chainId);
+  return wagmiChains.some((c) => c.id === chainId);
 }
