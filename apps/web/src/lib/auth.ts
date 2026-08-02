@@ -4,6 +4,7 @@ import { SiweMessage } from "siwe";
 import { randomBytes } from "crypto";
 import { prisma } from "./db";
 import { config } from "./config";
+import { toCanonicalEcdsaSignature } from "./ecdsa";
 
 export interface SessionData {
   userId: string;
@@ -62,7 +63,16 @@ export async function createNonce(address: string) {
 
 export async function verifySiweAndCreateSession(message: string, signature: string) {
   const siwe = new SiweMessage(message);
-  const fields = await siwe.verify({ signature });
+  const canonicalSignature = toCanonicalEcdsaSignature(signature);
+
+  let fields;
+  try {
+    fields = await siwe.verify({ signature: canonicalSignature });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Invalid signature";
+    // Surface SIWE/ethers validation failures as auth errors (not 500s)
+    throw new AuthError(msg.includes("non-canonical") ? "Invalid signature" : msg, 401);
+  }
 
   const stored = await prisma.authNonce.findFirst({
     where: {
