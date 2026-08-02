@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Signature } from "ethers";
+import { Signature, verifyMessage, Wallet } from "ethers";
 import { toCanonicalEcdsaSignature } from "./ecdsa";
 
 describe("toCanonicalEcdsaSignature", () => {
@@ -41,5 +41,24 @@ describe("toCanonicalEcdsaSignature", () => {
 
   it("passes through unexpected formats", () => {
     expect(toCanonicalEcdsaSignature("not-a-sig")).toBe("not-a-sig");
+  });
+
+  it("preserves recovered signer after high-s normalization", async () => {
+    const wallet = Wallet.createRandom();
+    const message = "Sign in to Paylane";
+    const signed = await wallet.signMessage(message);
+    const canon = Signature.from(signed);
+
+    const highS = (
+      BigInt("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141") - BigInt(canon._s)
+    )
+      .toString(16)
+      .padStart(64, "0");
+    const highV = (55 - canon.v).toString(16).padStart(2, "0");
+    const highSig = `0x${canon.r.slice(2)}${highS}${highV}`;
+
+    expect(Signature.from(highSig).isValid()).toBe(false);
+    const normalized = toCanonicalEcdsaSignature(highSig);
+    expect(verifyMessage(message, normalized).toLowerCase()).toBe(wallet.address.toLowerCase());
   });
 });
