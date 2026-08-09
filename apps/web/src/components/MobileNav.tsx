@@ -53,11 +53,11 @@ export function MobileNav({
         <>
           <button
             type="button"
-            className="fixed inset-0 z-40 bg-black/20"
+            className="fixed inset-0 z-40 bg-[var(--ink)]/35 backdrop-blur-[2px]"
             aria-label="Close menu overlay"
             onClick={() => setOpen(false)}
           />
-          <nav className="absolute left-0 right-0 top-full z-50 max-h-[min(70vh,28rem)] overflow-y-auto border-b border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-lg">
+          <nav className="absolute left-0 right-0 top-full z-50 max-h-[min(70vh,28rem)] overflow-y-auto border-b border-[var(--border)] bg-[var(--glass)] px-4 py-3 shadow-[var(--shadow)] backdrop-blur-xl">
             <div className="mb-3 grid grid-cols-2 gap-2 sm:hidden">
               <Link
                 href="/jobs"

@@ -10,10 +10,13 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface)] p-10 text-center">
-      <h3 className="font-display text-lg font-semibold">{title}</h3>
-      {description && <p className="mt-2 text-sm text-[var(--muted)]">{description}</p>}
-      {action && <div className="mt-4">{action}</div>}
+    <div className="empty-state">
+      <div className="mx-auto mb-4 h-10 w-10 rounded-xl lane-rail opacity-90" aria-hidden />
+      <h3 className="font-display text-lg font-semibold tracking-tight text-[var(--ink)]">{title}</h3>
+      {description && (
+        <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[var(--muted)]">{description}</p>
+      )}
+      {action && <div className="mt-5 flex justify-center">{action}</div>}
     </div>
   );
 }

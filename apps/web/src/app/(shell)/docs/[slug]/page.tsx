@@ -12,20 +12,26 @@ export default async function DocSlugPage({ params }: { params: Promise<{ slug: 
   const all = listDocs();
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
-      <aside className="space-y-4 text-sm">
+    <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+      <aside className="section-panel h-fit space-y-4 p-4 text-sm lg:sticky lg:top-24">
         {DOC_SECTIONS.map((section) => {
           const items = all.filter((d) => d.section === section);
           if (items.length === 0) return null;
           return (
             <div key={section}>
-              <p className="mb-2 font-medium text-[var(--muted)]">{section}</p>
-              <ul className="space-y-1">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+                {section}
+              </p>
+              <ul className="space-y-0.5">
                 {items.map((d) => (
                   <li key={d.slug}>
                     <Link
                       href={`/docs/${d.slug}`}
-                      className={d.slug === slug ? "text-[var(--brand-dark)] font-medium" : "hover:text-[var(--brand)]"}
+                      className={
+                        d.slug === slug
+                          ? "block rounded-lg bg-[var(--brand-soft)] px-2.5 py-1.5 font-semibold text-[var(--brand-dark)]"
+                          : "block rounded-lg px-2.5 py-1.5 text-[var(--muted)] transition hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
+                      }
                     >
                       {d.title}
                     </Link>
@@ -36,7 +42,7 @@ export default async function DocSlugPage({ params }: { params: Promise<{ slug: 
           );
         })}
       </aside>
-      <article className="prose-paylane max-w-3xl">
+      <article className="section-panel prose-paylane max-w-3xl p-5 sm:p-8">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{doc.content}</ReactMarkdown>
       </article>
     </div>

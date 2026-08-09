@@ -9,6 +9,7 @@ import { createDemoPaymentProof } from "@/lib/x402-client";
 import Link from "next/link";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero, InfoCallout, StepRail } from "@/components/PageChrome";
+import { Reveal, Stagger, StaggerItem } from "@/components/motion";
 
 export default function AgentsPage() {
   const { address } = useAccount();
@@ -153,83 +154,87 @@ export default function AgentsPage() {
         ]}
       />
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="card space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold">Spend policy</h2>
-            <span className={policy?.paused ? "badge badge-warn" : "badge badge-ok"}>
-              {policy?.paused ? "Paused" : "Active"}
-            </span>
+      <Reveal>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="card space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-lg font-semibold tracking-tight">Spend policy</h2>
+              <span className={policy?.paused ? "badge badge-warn" : "badge badge-ok"}>
+                {policy?.paused ? "Paused" : "Active"}
+              </span>
+            </div>
+            <p className="text-xs text-[var(--muted)]">
+              Policies apply to agent operators signed into Paylane on {cfg?.chainName ?? "Arc"}.
+            </p>
+            <label className="block">
+              <span className="label">Daily spend cap (USDC)</span>
+              <input className="input" value={cap} onChange={(e) => setCap(e.target.value)} />
+            </label>
+            <label className="block">
+              <span className="label">Allowlisted hosts</span>
+              <input className="input" value={hosts} onChange={(e) => setHosts(e.target.value)} />
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <SubmitButton onClick={savePolicy}>Save policy</SubmitButton>
+              <SubmitButton className="btn-secondary" onClick={togglePause}>
+                {policy?.paused ? "Resume spending" : "Kill switch"}
+              </SubmitButton>
+            </div>
+            {cfg?.faucetUrl && (
+              <a
+                href={cfg.faucetUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs font-medium text-[var(--brand)]"
+              >
+                Get testnet USDC from Circle faucet →
+              </a>
+            )}
           </div>
-          <p className="text-xs text-[var(--muted)]">
-            Policies apply to agent operators signed into Paylane on {cfg?.chainName ?? "Arc"}.
-          </p>
-          <label className="block">
-            <span className="label">Daily spend cap (USDC)</span>
-            <input className="input" value={cap} onChange={(e) => setCap(e.target.value)} />
-          </label>
-          <label className="block">
-            <span className="label">Allowlisted hosts</span>
-            <input className="input" value={hosts} onChange={(e) => setHosts(e.target.value)} />
-          </label>
-          <div className="flex flex-wrap gap-2">
-            <SubmitButton onClick={savePolicy}>Save policy</SubmitButton>
-            <SubmitButton className="btn-secondary" onClick={togglePause}>
-              {policy?.paused ? "Resume spending" : "Kill switch"}
-            </SubmitButton>
-          </div>
-          {cfg?.faucetUrl && (
-            <a
-              href={cfg.faucetUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-xs font-medium text-[var(--brand)]"
-            >
-              Get testnet USDC from Circle faucet →
-            </a>
-          )}
-        </div>
 
-        <div className="card space-y-4">
-          <h2 className="font-display text-lg font-semibold">Try a paid endpoint</h2>
-          <p className="text-sm text-[var(--muted)]">
-            Demo resource{" "}
-            <code className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 text-xs">
-              /api/demo/paid-weather
-            </code>{" "}
-            — unpaid returns 402, then pay ~$0.01 USDC equivalent to unlock JSON weather.
-          </p>
-          <SubmitButton onClick={payWeather}>Pay $0.01 & fetch</SubmitButton>
-          {err && <p className="text-sm text-red-600">{err}</p>}
-          {weather && (
-            <pre className="overflow-auto rounded-xl bg-[var(--ink)] p-4 text-xs text-white/90">
-              {JSON.stringify(weather, null, 2)}
-            </pre>
-          )}
-          <p className="text-xs text-[var(--muted)]">
-            CLI: <code>examples/agent-buyer</code> ·{" "}
-            <Link href="/receipts" className="font-semibold text-[var(--brand)]">
-              View receipts →
-            </Link>
-          </p>
+          <div className="card space-y-4">
+            <h2 className="font-display text-lg font-semibold tracking-tight">Try a paid endpoint</h2>
+            <p className="text-sm text-[var(--muted)]">
+              Demo resource{" "}
+              <code className="rounded bg-[var(--surface-2)] px-1.5 py-0.5 text-xs">
+                /api/demo/paid-weather
+              </code>{" "}
+              — unpaid returns 402, then pay ~$0.01 USDC equivalent to unlock JSON weather.
+            </p>
+            <SubmitButton onClick={payWeather}>Pay $0.01 & fetch</SubmitButton>
+            {err && <p className="text-sm text-[var(--danger)]">{err}</p>}
+            {weather && (
+              <pre className="overflow-auto rounded-xl bg-[var(--ink)] p-4 text-xs text-white/90">
+                {JSON.stringify(weather, null, 2)}
+              </pre>
+            )}
+            <p className="text-xs text-[var(--muted)]">
+              CLI: <code>examples/agent-buyer</code> ·{" "}
+              <Link href="/receipts" className="font-semibold text-[var(--brand)]">
+                View receipts →
+              </Link>
+            </p>
+          </div>
         </div>
-      </div>
+      </Reveal>
 
       <section>
-        <h2 className="mb-3 font-display text-lg font-semibold">Recent usage</h2>
+        <h2 className="mb-3 font-display text-lg font-semibold tracking-tight">Recent usage</h2>
         {usage.length === 0 ? (
           <EmptyState title="No paid calls yet" description="Run a paid request to populate usage." />
         ) : (
-          <ul className="space-y-2">
+          <Stagger className="space-y-2">
             {usage.map((u) => (
-              <li key={u.id} className="card flex justify-between text-sm">
-                <span>
-                  {u.resource.name} · {u.status}
-                </span>
-                <UsdcAmount minor={u.amountMinor} />
-              </li>
+              <StaggerItem key={u.id}>
+                <div className="card flex justify-between text-sm">
+                  <span>
+                    {u.resource.name} · {u.status}
+                  </span>
+                  <UsdcAmount minor={u.amountMinor} />
+                </div>
+              </StaggerItem>
             ))}
-          </ul>
+          </Stagger>
         )}
       </section>
     </div>

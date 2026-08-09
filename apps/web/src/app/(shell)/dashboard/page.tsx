@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { EmptyState } from "@/components/EmptyState";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero, InfoCallout, StatPill, QuickLinks } from "@/components/PageChrome";
+import { Stagger, StaggerItem, MotionCard, Reveal } from "@/components/motion";
 
 type Job = {
   id: string;
@@ -117,18 +118,24 @@ export default function DashboardPage() {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatPill label="Active jobs" value={String(jobs.length)} />
-        <StatPill label="Needs action" value={String(actionNeeded.length)} />
-        <div className="stat">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-            Ledger volume
-          </p>
-          <p className="mt-2 text-lg font-semibold">
-            <UsdcAmount minor={volume.toString()} />
-          </p>
-        </div>
-      </div>
+      <Stagger className="grid gap-4 sm:grid-cols-3">
+        <StaggerItem>
+          <StatPill label="Active jobs" value={String(jobs.length)} />
+        </StaggerItem>
+        <StaggerItem>
+          <StatPill label="Needs action" value={String(actionNeeded.length)} />
+        </StaggerItem>
+        <StaggerItem>
+          <div className="stat">
+            <p className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--muted)]">
+              Ledger volume
+            </p>
+            <p className="font-display mt-2 text-2xl font-bold tracking-tight">
+              <UsdcAmount minor={volume.toString()} />
+            </p>
+          </div>
+        </StaggerItem>
+      </Stagger>
 
       <InfoCallout title="What this dashboard shows" tone="brand">
         <p>
@@ -140,37 +147,45 @@ export default function DashboardPage() {
       </InfoCallout>
 
       {actionNeeded.length > 0 && (
-        <section>
-          <h2 className="mb-3 font-display text-lg font-semibold">Needs your attention</h2>
-          <ul className="space-y-2">
-            {actionNeeded.slice(0, 8).map((j) => (
-              <li key={j.id}>
-                <Link
-                  href={`/jobs/${j.id}`}
-                  className="card-quiet flex items-center justify-between gap-3 text-sm hover:border-[var(--brand)]"
-                >
-                  <span className="font-medium">{j.title}</span>
-                  <StatusBadge status={j.status} />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <Reveal>
+          <section>
+            <h2 className="mb-3 font-display text-lg font-semibold tracking-tight">
+              Needs your attention
+            </h2>
+            <Stagger className="space-y-2">
+              {actionNeeded.slice(0, 8).map((j) => (
+                <StaggerItem key={j.id}>
+                  <Link
+                    href={`/jobs/${j.id}`}
+                    className="card-quiet flex items-center justify-between gap-3 text-sm hover:border-[var(--brand)]"
+                  >
+                    <span className="font-medium">{j.title}</span>
+                    <StatusBadge status={j.status} />
+                  </Link>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </section>
+        </Reveal>
       )}
 
       <div className="grid gap-8 md:grid-cols-2">
-        <section>
-          <h2 className="mb-3 font-display text-lg font-semibold">As client</h2>
-          <JobList items={asClient} empty="No hire jobs yet — post one to lock escrow." />
-        </section>
-        <section>
-          <h2 className="mb-3 font-display text-lg font-semibold">As worker</h2>
-          <JobList items={asWorker} empty="No assignments yet — accept a funded job." />
-        </section>
+        <Reveal>
+          <section>
+            <h2 className="mb-3 font-display text-lg font-semibold tracking-tight">As client</h2>
+            <JobList items={asClient} empty="No hire jobs yet — post one to lock escrow." />
+          </section>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <section>
+            <h2 className="mb-3 font-display text-lg font-semibold tracking-tight">As worker</h2>
+            <JobList items={asWorker} empty="No assignments yet — accept a funded job." />
+          </section>
+        </Reveal>
       </div>
 
       <section>
-        <h2 className="mb-3 font-display text-lg font-semibold">Shortcuts</h2>
+        <h2 className="mb-3 font-display text-lg font-semibold tracking-tight">Shortcuts</h2>
         <QuickLinks
           links={[
             { href: "/receipts", label: "Receipts", desc: "Every fund, release, and API pay" },
@@ -192,21 +207,23 @@ function JobList({
 }) {
   if (items.length === 0) return <p className="text-sm text-[var(--muted)]">{empty}</p>;
   return (
-    <ul className="space-y-2">
+    <Stagger className="space-y-2">
       {items.map((j) => (
-        <li key={j.id}>
-          <Link
-            href={`/jobs/${j.id}`}
-            className="card flex items-center justify-between gap-3 text-sm hover:border-[var(--brand)]"
-          >
-            <div>
-              <p className="font-medium">{j.title}</p>
-              <StatusBadge status={j.status} className="mt-1" />
-            </div>
-            <UsdcAmount minor={j.amountMinor} />
-          </Link>
-        </li>
+        <StaggerItem key={j.id}>
+          <MotionCard>
+            <Link
+              href={`/jobs/${j.id}`}
+              className="card flex items-center justify-between gap-3 text-sm"
+            >
+              <div>
+                <p className="font-medium text-[var(--ink)]">{j.title}</p>
+                <StatusBadge status={j.status} className="mt-1" />
+              </div>
+              <UsdcAmount minor={j.amountMinor} />
+            </Link>
+          </MotionCard>
+        </StaggerItem>
       ))}
-    </ul>
+    </Stagger>
   );
 }

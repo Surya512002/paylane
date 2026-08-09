@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { DocMeta, DocSection } from "@/lib/docs";
 import { PageHero, InfoCallout } from "@/components/PageChrome";
+import { Stagger, StaggerItem, MotionCard } from "@/components/motion";
 
 const SECTIONS: DocSection[] = ["Users", "Developers/Agents", "Trust & Safety", "For Officials"];
 
@@ -21,7 +22,7 @@ export function DocsHomeClient({ docs }: { docs: DocMeta[] }) {
   }, [docs, q, section]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <PageHero
         eyebrow="Docs"
         title="Paylane documentation"
@@ -62,16 +63,20 @@ export function DocsHomeClient({ docs }: { docs: DocMeta[] }) {
           </button>
         ))}
       </div>
-      <ul className="grid gap-3 sm:grid-cols-2">
+      <Stagger className="grid gap-3 sm:grid-cols-2">
         {filtered.map((d) => (
-          <li key={d.slug}>
-            <Link href={`/docs/${d.slug}`} className="card block hover:border-[var(--brand)]">
-              <p className="text-xs text-[var(--muted)]">{d.section}</p>
-              <p className="font-medium">{d.title}</p>
-            </Link>
-          </li>
+          <StaggerItem key={d.slug}>
+            <MotionCard>
+              <Link href={`/docs/${d.slug}`} className="card block h-full hover:border-[var(--brand)]">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+                  {d.section}
+                </p>
+                <p className="mt-1 font-semibold text-[var(--ink)]">{d.title}</p>
+              </Link>
+            </MotionCard>
+          </StaggerItem>
         ))}
-      </ul>
+      </Stagger>
     </div>
   );
 }

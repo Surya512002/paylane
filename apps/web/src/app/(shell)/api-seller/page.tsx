@@ -139,7 +139,7 @@ export default function ApiSellerPage() {
             onChange={(e) => setForm({ ...form, price: e.target.value })}
           />
         </label>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
         <SubmitButton onClick={create}>Create resource</SubmitButton>
       </div>
 

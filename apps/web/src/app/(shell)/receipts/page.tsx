@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero, InfoCallout } from "@/components/PageChrome";
+import { Stagger, StaggerItem } from "@/components/motion";
 
 type Receipt = {
   id: string;
@@ -94,41 +95,40 @@ export default function ReceiptsPage() {
           description="Fund a job or pay an API to see receipts appear here."
         />
       ) : (
-        <ul className="space-y-2">
+        <Stagger className="space-y-2">
           {filtered.map((r) => (
-            <li
-              key={r.id}
-              className="card flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div>
-                <p className="font-semibold capitalize">
-                  {r.kind.replace(/_/g, " ")}
-                  {r.job?.title ? ` · ${r.job.title}` : ""}
-                </p>
-                <p className="mt-0.5 text-xs text-[var(--muted)]">
-                  {r.type.toUpperCase()} · {r.status} ·{" "}
-                  {format(new Date(r.createdAt), "MMM d, yyyy HH:mm")}
-                </p>
-                {r.txHash && !r.txHash.startsWith("demo:") && (
-                  <a
-                    className="mt-1 inline-block text-xs font-medium text-[var(--brand)]"
-                    href={`${explorer.replace(/\/$/, "")}/tx/${r.txHash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    View on Arcscan →
-                  </a>
-                )}
-                {r.txHash?.startsWith("demo:") && (
-                  <p className="mt-1 text-xs text-[var(--muted)]">
-                    Simulated settlement ({r.txHash})
+            <StaggerItem key={r.id}>
+              <div className="card flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="font-semibold capitalize text-[var(--ink)]">
+                    {r.kind.replace(/_/g, " ")}
+                    {r.job?.title ? ` · ${r.job.title}` : ""}
                   </p>
-                )}
+                  <p className="mt-0.5 text-xs text-[var(--muted)]">
+                    {r.type.toUpperCase()} · {r.status} ·{" "}
+                    {format(new Date(r.createdAt), "MMM d, yyyy HH:mm")}
+                  </p>
+                  {r.txHash && !r.txHash.startsWith("demo:") && (
+                    <a
+                      className="mt-1 inline-block text-xs font-medium text-[var(--brand)]"
+                      href={`${explorer.replace(/\/$/, "")}/tx/${r.txHash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      View on explorer →
+                    </a>
+                  )}
+                  {r.txHash?.startsWith("demo:") && (
+                    <p className="mt-1 text-xs text-[var(--muted)]">
+                      Simulated settlement ({r.txHash})
+                    </p>
+                  )}
+                </div>
+                <UsdcAmount minor={r.amountMinor} className="font-semibold" />
               </div>
-              <UsdcAmount minor={r.amountMinor} className="font-semibold" />
-            </li>
+            </StaggerItem>
           ))}
-        </ul>
+        </Stagger>
       )}
     </div>
   );

@@ -17,23 +17,23 @@ export default function TrustPage() {
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="card overflow-hidden p-0">
+        <div className="card animate-rise overflow-hidden p-0">
           <img
             src="/brand/paylane-mode-escrow.png"
             alt="Escrow"
             className="h-40 w-full object-cover"
           />
           <div className="p-4 text-sm">
-            <p className="font-semibold">Mode A — Escrow</p>
+            <p className="font-semibold text-[var(--ink)]">Mode A — Escrow</p>
             <p className="mt-1 text-[var(--muted)]">
               Funds locked on-chain before work. Accept / revise / dispute / auto-release.
             </p>
           </div>
         </div>
-        <div className="card overflow-hidden p-0">
+        <div className="card animate-rise-delay overflow-hidden p-0">
           <img src="/brand/paylane-mode-api.png" alt="API pay" className="h-40 w-full object-cover" />
           <div className="p-4 text-sm">
-            <p className="font-semibold">Mode B — Instant pay</p>
+            <p className="font-semibold text-[var(--ink)]">Mode B — Instant pay</p>
             <p className="mt-1 text-[var(--muted)]">
               x402 access-for-payment. No freelance dispute flow after a successful response.
             </p>
@@ -42,19 +42,19 @@ export default function TrustPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="stat">
-          <p className="text-xs font-semibold uppercase text-[var(--muted)]">Network</p>
-          <p className="mt-2 font-semibold">{cfg.chainName}</p>
+        <div className="stat animate-rise">
+          <p className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--muted)]">Network</p>
+          <p className="mt-2 font-semibold text-[var(--ink)]">{cfg.chainName}</p>
           <p className="text-xs text-[var(--muted)]">ID {cfg.chainId}</p>
         </div>
-        <div className="stat">
-          <p className="text-xs font-semibold uppercase text-[var(--muted)]">Platform fee</p>
-          <p className="mt-2 font-semibold">{cfg.platformFeeBps / 100}%</p>
+        <div className="stat animate-rise-delay">
+          <p className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--muted)]">Platform fee</p>
+          <p className="mt-2 font-semibold text-[var(--ink)]">{cfg.platformFeeBps / 100}%</p>
           <p className="text-xs text-[var(--muted)]">On worker release only</p>
         </div>
-        <div className="stat">
-          <p className="text-xs font-semibold uppercase text-[var(--muted)]">Review window</p>
-          <p className="mt-2 font-semibold">{cfg.reviewWindowHours}h</p>
+        <div className="stat animate-rise-delay-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--muted)]">Review window</p>
+          <p className="mt-2 font-semibold text-[var(--ink)]">{cfg.reviewWindowHours}h</p>
           <p className="text-xs text-[var(--muted)]">Then auto-release</p>
         </div>
       </div>

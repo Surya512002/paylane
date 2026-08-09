@@ -171,15 +171,15 @@ export function LaneMotionBackdrop({ className }: { className?: string }) {
       >
         <defs>
           <linearGradient id="laneA" x1="0" y1="0" x2="720" y2="0" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#1a5cff" stopOpacity="0" />
-            <stop offset="0.35" stopColor="#1a5cff" stopOpacity="0.85" />
-            <stop offset="0.75" stopColor="#00b89c" stopOpacity="0.9" />
-            <stop offset="1" stopColor="#00b89c" stopOpacity="0" />
+            <stop stopColor="#1860f0" stopOpacity="0" />
+            <stop offset="0.35" stopColor="#1860f0" stopOpacity="0.9" />
+            <stop offset="0.75" stopColor="#0d9f8c" stopOpacity="0.95" />
+            <stop offset="1" stopColor="#0d9f8c" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="laneB" x1="0" y1="80" x2="720" y2="80" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#00b89c" stopOpacity="0" />
-            <stop offset="0.4" stopColor="#00b89c" stopOpacity="0.7" />
-            <stop offset="1" stopColor="#1a5cff" stopOpacity="0" />
+            <stop stopColor="#0d9f8c" stopOpacity="0" />
+            <stop offset="0.4" stopColor="#0d9f8c" stopOpacity="0.75" />
+            <stop offset="1" stopColor="#1860f0" stopOpacity="0" />
           </linearGradient>
         </defs>
         {reduce ? (
@@ -236,7 +236,7 @@ export function LaneMotionBackdrop({ className }: { className?: string }) {
             {/* Moving settlement dots along the lanes */}
             <motion.circle
               r="5"
-              fill="#1a5cff"
+              fill="#1860f0"
               initial={{ opacity: 0 }}
               animate={{
                 opacity: [0, 1, 1, 0],
@@ -247,7 +247,7 @@ export function LaneMotionBackdrop({ className }: { className?: string }) {
             />
             <motion.circle
               r="4"
-              fill="#00b89c"
+              fill="#0d9f8c"
               initial={{ opacity: 0 }}
               animate={{
                 opacity: [0, 1, 1, 0],

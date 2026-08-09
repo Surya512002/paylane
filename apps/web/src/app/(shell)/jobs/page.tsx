@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { StatusBadge } from "@/components/StatusBadge";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero, InfoCallout, StepRail } from "@/components/PageChrome";
+import { Stagger, StaggerItem, MotionCard } from "@/components/motion";
 
 interface JobRow {
   id: string;
@@ -115,27 +116,29 @@ export default function JobsPage() {
           }
         />
       ) : (
-        <ul className="space-y-3">
+        <Stagger className="space-y-3">
           {filtered.map((j) => (
-            <li key={j.id}>
-              <Link
-                href={`/jobs/${j.id}`}
-                className="card flex flex-col gap-3 transition hover:border-[var(--brand)] sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="truncate font-semibold">{j.title}</p>
-                    <StatusBadge status={j.status} />
+            <StaggerItem key={j.id}>
+              <MotionCard>
+                <Link
+                  href={`/jobs/${j.id}`}
+                  className="card flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="truncate font-semibold text-[var(--ink)]">{j.title}</p>
+                      <StatusBadge status={j.status} />
+                    </div>
+                    {j.description && (
+                      <p className="mt-1 line-clamp-2 text-sm text-[var(--muted)]">{j.description}</p>
+                    )}
                   </div>
-                  {j.description && (
-                    <p className="mt-1 line-clamp-2 text-sm text-[var(--muted)]">{j.description}</p>
-                  )}
-                </div>
-                <UsdcAmount minor={j.amountMinor} className="shrink-0 text-base font-semibold" />
-              </Link>
-            </li>
+                  <UsdcAmount minor={j.amountMinor} className="shrink-0 text-base font-semibold" />
+                </Link>
+              </MotionCard>
+            </StaggerItem>
           ))}
-        </ul>
+        </Stagger>
       )}
     </div>
   );

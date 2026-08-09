@@ -22,8 +22,9 @@ export default function HomePage() {
           alt=""
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#eef3fb]/95 via-[#eef3fb]/88 to-[#eef3fb]/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)]/96 via-[var(--background)]/88 to-[var(--background)]/35" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-[var(--brand-soft)]/20" />
+        <div className="mesh-noise absolute inset-0 opacity-40" />
         <LaneMotionBackdrop />
         <div className="lane-rail lane-animated absolute bottom-0 left-0 right-0 h-1.5" />
 
@@ -43,7 +44,7 @@ export default function HomePage() {
             </HeroLine>
             <HeroLine
               as="p"
-              className="mt-3 max-w-xl text-sm text-[var(--muted)] sm:mt-4 sm:text-base md:text-lg"
+              className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--muted)] sm:mt-4 sm:text-base md:text-lg"
             >
               Escrow protects freelance jobs. Instant x402 pay unlocks APIs. One wallet, clear rules,
               and receipts on Arc Testnet or Base Sepolia today.
@@ -68,8 +69,9 @@ export default function HomePage() {
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-20 md:pt-24 lg:px-8">
         <Reveal>
-          <h2 className="font-display text-2xl font-semibold">How money moves</h2>
-          <p className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
+          <div className="lane-divider mb-5 w-12" />
+          <h2 className="section-title">How money moves</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--muted)]">
             Two products, two rulebooks — never mixed. Pick the lane that matches your work.
           </p>
         </Reveal>
@@ -139,7 +141,8 @@ export default function HomePage() {
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-20 pt-4 sm:px-6 lg:px-8">
         <Reveal>
-          <h2 className="font-display mb-8 text-2xl font-semibold">Typical escrow journey</h2>
+          <div className="lane-divider mb-5 w-12" />
+          <h2 className="section-title mb-8">Typical escrow journey</h2>
         </Reveal>
         <StepRail
           steps={[
@@ -165,7 +168,8 @@ export default function HomePage() {
 
       <section className="mx-auto w-full max-w-7xl space-y-8 px-4 pb-20 pt-4 sm:px-6 lg:px-8">
         <Reveal>
-          <h2 className="font-display text-2xl font-semibold">Explore Paylane</h2>
+          <div className="lane-divider mb-5 w-12" />
+          <h2 className="section-title">Explore Paylane</h2>
         </Reveal>
         <QuickLinks
           links={[
@@ -181,15 +185,23 @@ export default function HomePage() {
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-24 pt-4 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="card flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="font-display text-xl font-semibold">Built for Arc and Base</h2>
-              <p className="mt-2 max-w-xl text-sm text-[var(--muted)]">
+          <div className="relative overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow)] sm:p-8 md:flex md:items-center md:justify-between md:gap-8">
+            <div
+              className="pointer-events-none absolute inset-0 opacity-90"
+              aria-hidden
+              style={{ background: "var(--lane-soft)" }}
+            />
+            <div className="relative z-10">
+              <div className="lane-divider mb-4 w-12" />
+              <h2 className="font-display text-xl font-semibold tracking-tight sm:text-2xl">
+                Built for Arc and Base
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-[var(--muted)]">
                 Escrow is live on Arc Testnet via an upgradeable proxy. Add Base Sepolia from the
                 header network menu — deploy escrow per chain, same app.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="relative z-10 mt-6 flex flex-wrap gap-2 md:mt-0 md:shrink-0">
               <Link href="/settings" className="btn-primary">
                 View network
               </Link>

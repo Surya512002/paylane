@@ -43,8 +43,10 @@ export function JobTimeline({
               key={s}
               className={clsx(
                 "rounded-full px-3 py-1 text-xs",
-                done ? "bg-[var(--brand)]/15 text-[var(--brand-dark)]" : "bg-[var(--border)]/40 text-[var(--muted)]",
-                current && "ring-2 ring-[var(--brand)]",
+                done
+                  ? "bg-[var(--brand-soft)] font-medium text-[var(--brand-dark)] border border-[var(--brand)]/20"
+                  : "bg-[var(--surface-2)] text-[var(--muted)] border border-transparent",
+                current && "ring-2 ring-[var(--brand)] ring-offset-2 ring-offset-[var(--background)]",
               )}
             >
               {s.replace(/([A-Z])/g, " $1").trim()}

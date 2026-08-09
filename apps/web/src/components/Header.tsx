@@ -186,7 +186,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--surface)] shadow-sm">
+    <header className="site-header sticky top-0 z-50 w-full">
       <div className="relative mx-auto flex w-full max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3 lg:px-8">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
           <MobileNav
@@ -217,8 +217,8 @@ export function Header() {
                 className={clsx(
                   "rounded-lg px-2.5 py-1.5 transition",
                   pathname.startsWith(l.href)
-                    ? "bg-[var(--brand-soft)] font-semibold text-[var(--brand-dark)]"
-                    : "text-[var(--muted)] hover:text-[var(--ink)]",
+                    ? "bg-[var(--brand-soft)] font-semibold text-[var(--brand-dark)] shadow-[var(--shadow-xs)]"
+                    : "text-[var(--muted)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]",
                 )}
               >
                 {l.label}
@@ -239,12 +239,12 @@ export function Header() {
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <div className="hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)] p-0.5 text-xs lg:flex">
+          <div className="hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)] p-0.5 text-xs shadow-[var(--shadow-xs)] lg:flex">
             <Link
               href="/jobs"
               className={clsx(
-                "rounded-full px-2.5 py-1.5 font-medium",
-                mode === "hire" && "bg-[var(--ink)] text-white",
+                "rounded-full px-2.5 py-1.5 font-medium transition",
+                mode === "hire" && "bg-[var(--ink)] text-white shadow-[var(--shadow-xs)]",
               )}
             >
               Hire / Work
@@ -252,8 +252,8 @@ export function Header() {
             <Link
               href="/agents"
               className={clsx(
-                "rounded-full px-2.5 py-1.5 font-medium",
-                mode === "api" && "bg-[var(--ink)] text-white",
+                "rounded-full px-2.5 py-1.5 font-medium transition",
+                mode === "api" && "bg-[var(--ink)] text-white shadow-[var(--shadow-xs)]",
               )}
             >
               API / Agents
