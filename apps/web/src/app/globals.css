@@ -176,6 +176,16 @@ svg {
 .animate-rise-delay-2 {
   animation: rise-in 0.7s ease-out 0.22s both;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-rise-delay,
+  .animate-rise-delay-2,
+  .lane-animated {
+    animation: none !important;
+  }
+}
+
 .section-title {
   @apply font-display text-2xl font-semibold tracking-tight;
 }

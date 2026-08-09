@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import clsx from "clsx";
+import { MotionCard, Reveal, Stagger, StaggerItem } from "@/components/motion";
 
 export function PageHero({
   eyebrow,
@@ -17,7 +20,7 @@ export function PageHero({
   imageAlt?: string;
 }) {
   return (
-    <div
+    <Reveal
       className={clsx(
         "relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)]",
         imageSrc && "md:grid md:grid-cols-[1.2fr_0.8fr]",
@@ -44,7 +47,7 @@ export function PageHero({
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[var(--surface)] via-[var(--surface)]/40 to-transparent md:from-[var(--surface)]/90 md:via-[var(--surface)]/30" />
         </div>
       )}
-    </div>
+    </Reveal>
   );
 }
 
@@ -76,15 +79,17 @@ export function StepRail({
   steps: Array<{ title: string; body: string }>;
 }) {
   return (
-    <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <Stagger className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {steps.map((s, i) => (
-        <li key={s.title} className="card-quiet relative">
-          <span className="font-display text-2xl font-bold text-[var(--brand)]/30">{i + 1}</span>
-          <p className="mt-1 font-semibold">{s.title}</p>
-          <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{s.body}</p>
-        </li>
+        <StaggerItem key={s.title}>
+          <MotionCard className="card-quiet relative h-full">
+            <span className="font-display text-2xl font-bold text-[var(--brand)]/30">{i + 1}</span>
+            <p className="mt-1 font-semibold">{s.title}</p>
+            <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{s.body}</p>
+          </MotionCard>
+        </StaggerItem>
       ))}
-    </ol>
+    </Stagger>
   );
 }
 
@@ -103,15 +108,20 @@ export function QuickLinks({
   links: Array<{ href: string; label: string; desc: string }>;
 }) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <Stagger className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {links.map((l) => (
-        <li key={l.href}>
-          <Link href={l.href} className="card block h-full transition hover:border-[var(--brand)]">
-            <p className="font-semibold">{l.label}</p>
-            <p className="mt-1 text-sm text-[var(--muted)]">{l.desc}</p>
-          </Link>
-        </li>
+        <StaggerItem key={l.href}>
+          <MotionCard>
+            <Link
+              href={l.href}
+              className="card block h-full transition hover:border-[var(--brand)]"
+            >
+              <p className="font-semibold">{l.label}</p>
+              <p className="mt-1 text-sm text-[var(--muted)]">{l.desc}</p>
+            </Link>
+          </MotionCard>
+        </StaggerItem>
       ))}
-    </ul>
+    </Stagger>
   );
 }
