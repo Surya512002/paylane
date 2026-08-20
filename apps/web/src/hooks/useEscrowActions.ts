@@ -48,22 +48,36 @@ export function useEscrowActions(cfg: Cfg | null) {
       const { escrow, usdc, account } = ensureLive();
       if (!publicClient) throw new Error("RPC not ready — try refreshing the page");
 
-      const onChainAmount = minorToChainUnits(params.amountMinor, cfg.usdcDecimals);
-      const humanAmount = formatUnits(onChainAmount, cfg.usdcDecimals);
+      // Prefer on-chain decimals() so Arc's ERC-20 (6) is never confused with native gas (18).
+      let tokenDecimals = cfg.usdcDecimals;
+      try {
+        tokenDecimals = Number(
+          await publicClient.readContract({
+            address: usdc,
+            abi: erc20Abi,
+            functionName: "decimals",
+          }),
+        );
+      } catch {
+        /* use cfg */
+      }
+
+      const onChainAmount = minorToChainUnits(params.amountMinor, tokenDecimals);
+      const humanAmount = formatUnits(onChainAmount, tokenDecimals);
 
       setPending("Checking USDC balance…");
-      const balance = await publicClient.readContract({
+      const balance = (await publicClient.readContract({
         address: usdc,
         abi: erc20Abi,
         functionName: "balanceOf",
         args: [account],
-      }) as bigint;
+      })) as bigint;
 
       if (balance < onChainAmount) {
-        const has = formatUnits(balance, cfg.usdcDecimals);
+        const has = formatUnits(balance, tokenDecimals);
         setPending(null);
         throw new Error(
-          `Insufficient USDC: you have ${has} but need ${humanAmount}. Get testnet USDC from the Circle faucet (faucet.circle.com).`,
+          `Insufficient USDC on Arc: wallet shows ${has} USDC (ERC-20), need ${humanAmount}. Switch MetaMask to Arc Testnet and fund from faucet.circle.com if needed.`,
         );
       }
 

@@ -15,7 +15,11 @@ export interface ChainPreset {
   explorerUrl: string;
   explorerName: string;
   usdcAddress: `0x${string}`;
-  /** On-chain USDC token decimals (Arc native USDC = 18, Base USDC = 6). */
+  /**
+   * ERC-20 USDC decimals used for approve / transferFrom / balanceOf / escrow amounts.
+   * On Arc, native gas USDC is 18 decimals, but the ERC-20 interface at 0x3600… is 6.
+   * Always use this (6) for escrow — never mix with native 18-decimal balances.
+   */
   usdcDecimals: number;
   nativeCurrency: { name: string; symbol: string; decimals: number };
   faucetUrl?: string;
@@ -34,7 +38,8 @@ const CHAIN_PRESETS: Record<ChainKey, ChainPreset> = {
     explorerUrl: "https://testnet.arcscan.app",
     explorerName: "Arcscan",
     usdcAddress: "0x3600000000000000000000000000000000000000",
-    usdcDecimals: 18,
+    // ERC-20 interface is 6 decimals (confirmed on-chain). Native gas is still 18.
+    usdcDecimals: 6,
     nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
     faucetUrl: "https://faucet.circle.com",
     isTestnet: true,
@@ -51,7 +56,7 @@ const CHAIN_PRESETS: Record<ChainKey, ChainPreset> = {
     explorerName: "Arcscan",
     usdcAddress: (process.env.NEXT_PUBLIC_ARC_MAINNET_USDC ??
       "0x0000000000000000000000000000000000000000") as `0x${string}`,
-    usdcDecimals: 18,
+    usdcDecimals: 6,
     nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
     isTestnet: false,
   },
@@ -170,10 +175,7 @@ function inferActiveChainKey(): ChainKey {
 function parseSupportedChainKeys(active: ChainKey): ChainKey[] {
   const raw = env("NEXT_PUBLIC_SUPPORTED_CHAINS");
   if (!raw) {
-    // Default: both testnets when active is a testnet
-    if (active === "arc-testnet" || active === "base-sepolia") {
-      return ["arc-testnet", "base-sepolia"];
-    }
+    // Default to Arc Testnet only — Base remains available via env when needed.
     return [active];
   }
   const keys = raw

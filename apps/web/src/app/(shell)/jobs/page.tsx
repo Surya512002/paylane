@@ -74,7 +74,7 @@ export default function JobsPage() {
       <StepRail
         steps={[
           { title: "Draft & publish", body: "Write the brief and at least one acceptance criterion." },
-          { title: "Fund", body: "Approve USDC and lock escrow on Arc or Base testnet." },
+          { title: "Fund", body: "Approve USDC and lock escrow on Arc Testnet." },
           { title: "Assign", body: "Hire a worker wallet — then work may begin." },
           { title: "Settle", body: "Accept, revise ≤2×, dispute, or auto-release." },
         ]}

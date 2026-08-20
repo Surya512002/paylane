@@ -37,28 +37,63 @@ export default function NewJobPage() {
 
   async function submit() {
     setError(null);
+    const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim();
+    const criteria = checklist.map((c) => c.trim()).filter(Boolean);
+
+    if (trimmedTitle.length < 3) {
+      setError("Title must be at least 3 characters");
+      return;
+    }
+    if (trimmedDescription.length < 10) {
+      setError("Description must be at least 10 characters");
+      return;
+    }
+    if (criteria.length < 1) {
+      setError("Add at least one acceptance criterion");
+      return;
+    }
+
+    let amountMinor: bigint;
+    try {
+      amountMinor = parseUsdcToMinor(amount);
+    } catch {
+      setError("Enter a valid USDC amount");
+      return;
+    }
+    if (amountMinor <= 0n) {
+      setError("Budget must be greater than 0 USDC");
+      return;
+    }
+
     const days = Number(deadlineDays);
     const deadlineAt =
       Number.isFinite(days) && days > 0
         ? new Date(Date.now() + days * 86400000).toISOString()
         : null;
-    const res = await fetch("/api/jobs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        description,
-        amountMinor: parseUsdcToMinor(amount).toString(),
-        checklist: checklist.filter(Boolean),
-        deadlineAt,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error ?? "Could not create job");
-      return;
+
+    try {
+      const res = await fetch("/api/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: trimmedTitle,
+          description: trimmedDescription,
+          amountMinor: amountMinor.toString(),
+          checklist: criteria,
+          deadlineAt,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(typeof data.error === "string" ? data.error : "Could not create job");
+        return;
+      }
+      if (data.job?.id) router.push(`/jobs/${data.job.id}`);
+      else setError("Job created but no id returned — refresh and check Dashboard");
+    } catch {
+      setError("Network error — check your connection and try again");
     }
-    if (data.job?.id) router.push(`/jobs/${data.job.id}`);
   }
 
   const amountMinor = (() => {
@@ -86,7 +121,7 @@ export default function NewJobPage() {
       {!wallet.ready && (
         <SessionGate
           title="Sign in to post a job"
-          description="Connect on Arc Testnet or Base Sepolia, sign SIWE, then save a draft. Default budget is 1 USDC so a faucet is enough."
+          description="Connect on Arc Testnet, sign SIWE, then save a draft. Default budget is 1 USDC so a faucet is enough."
         />
       )}
 

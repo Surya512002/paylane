@@ -4,7 +4,7 @@ import { useWalletSession } from "@/components/WalletSession";
 
 export function SessionGate({
   title = "Sign in to continue",
-  description = "Connect your wallet on Arc Testnet or Base Sepolia, then sign the SIWE message. Escrow is on-chain.",
+  description = "Connect your wallet on Arc Testnet, then sign the SIWE message. Escrow is on-chain.",
 }: {
   title?: string;
   description?: string;

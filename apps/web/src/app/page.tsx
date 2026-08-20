@@ -35,7 +35,7 @@ export default function HomePage() {
         <div className="relative mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-12 sm:px-6 sm:py-16 md:min-h-[min(78vh,44rem)] md:py-20 lg:px-8">
           <HeroCopy>
             <HeroLine className="flex flex-wrap items-center gap-2">
-              <span className="badge badge-ok">Live on Arc Testnet + Base Sepolia</span>
+              <span className="badge badge-ok">Live on Arc Testnet</span>
               <span className="badge badge-brand">Non-custodial USDC</span>
             </HeroLine>
             <HeroLine
@@ -116,7 +116,7 @@ export default function HomePage() {
             </p>
             <ol className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {[
-                { n: "1", t: "Connect wallet", d: "MetaMask or any EVM wallet on Arc Testnet or Base Sepolia" },
+                { n: "1", t: "Connect wallet", d: "MetaMask on Arc Testnet (chain ID 5042002)" },
                 { n: "2", t: "Sign in (SIWE)", d: "Sign a message to authenticate — no password needed" },
                 { n: "3", t: "Post & fund", d: "Create a job, approve USDC, and lock it in escrow (2 txs)" },
                 { n: "4", t: "Work & submit", d: "Assign a worker, submit delivery notes and artifacts" },
@@ -233,7 +233,7 @@ export default function HomePage() {
             { href: "/receipts", label: "Ledger", desc: "Every fund, release, and API pay" },
             { href: "/trust", label: "Trust Center", desc: "Money rules, disputes, risk" },
             { href: "/settings", label: "Live status", desc: "Escrow addresses & explorers" },
-            { href: "/docs/networks", label: "Networks", desc: "Arc Testnet and Base Sepolia" },
+            { href: "/docs/networks", label: "Networks", desc: "Arc Testnet (USDC native)" },
             { href: "/docs/for-officials", label: "For officials", desc: "Arc / Circle alignment" },
           ]}
         />

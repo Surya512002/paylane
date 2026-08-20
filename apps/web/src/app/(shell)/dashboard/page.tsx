@@ -83,7 +83,7 @@ export default function DashboardPage() {
         />
         <EmptyState
           title="Sign in to open your dashboard"
-          description="Connect a wallet on Arc Testnet or Base Sepolia and Sign in (SIWE). Escrow is live on-chain — not a demo."
+          description="Connect a wallet on Arc Testnet and Sign in (SIWE). Escrow is live on-chain — not a demo."
         />
         <SessionGate />
       </div>
@@ -101,7 +101,7 @@ export default function DashboardPage() {
         subtitle={
           live
             ? "Live escrow is connected. Fund jobs from your wallet — USDC locks in PaylaneEscrow before work starts."
-            : "Switch your wallet to Arc Testnet or Base Sepolia. Escrow contracts are live on both testnets."
+            : "Switch your wallet to Arc Testnet. Escrow is live on-chain."
         }
         imageSrc="/brand/paylane-mode-escrow.png"
         imageAlt="Escrow illustration"

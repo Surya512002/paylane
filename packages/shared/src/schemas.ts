@@ -1,11 +1,14 @@
 import { z } from "zod";
 
 export const createJobSchema = z.object({
-  title: z.string().min(3).max(120),
-  description: z.string().min(10).max(10_000),
-  amountMinor: z.string().regex(/^\d+$/),
-  deadlineAt: z.string().datetime().optional().nullable(),
-  checklist: z.array(z.string().min(1).max(500)).min(1),
+  title: z.string().trim().min(3).max(120),
+  description: z.string().trim().min(10).max(10_000),
+  amountMinor: z
+    .string()
+    .regex(/^\d+$/)
+    .refine((v) => BigInt(v) > 0n, { message: "Amount must be greater than 0" }),
+  deadlineAt: z.string().datetime({ offset: true }).optional().nullable(),
+  checklist: z.array(z.string().trim().min(1).max(500)).min(1),
 });
 
 export const revisionSchema = z.object({

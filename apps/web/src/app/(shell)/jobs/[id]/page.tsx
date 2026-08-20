@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import { isAddress } from "viem";
 import { useAccount } from "wagmi";
 import { formatDistanceToNow } from "date-fns";
-import { JobTimeline } from "@/components/JobTimeline";
 import { UsdcAmount } from "@/components/UsdcAmount";
 import { SubmitButton } from "@/components/SubmitButton";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -151,7 +150,7 @@ export default function JobDetailPage() {
         }
         if (!escrowAddr) {
           setError(
-            "Switch your wallet to Arc Testnet or Base Sepolia (live escrow in Settings), then fund again.",
+            "Switch your wallet to Arc Testnet, then fund again.",
           );
           return;
         }
@@ -302,12 +301,12 @@ export default function JobDetailPage() {
       ? "1) Publish the listing. 2) Fund escrow with testnet USDC. 3) Assign a worker (yourself to test). 4) Submit work."
       : job.status === "Published" && isClient
         ? live
-          ? "Fund escrow next: connect the client wallet on Arc Testnet or Base Sepolia, then approve USDC."
-          : "Switch to a live testnet in the header, then fund escrow."
+          ? "Fund escrow next: connect the client wallet on Arc Testnet, then approve USDC."
+          : "Switch to Arc Testnet in the header, then fund escrow."
         : job.status === "Funded" && isClient && !job.worker
           ? "Assign a worker wallet so they can submit work. To test end-to-end, assign your own wallet."
           : canSubmit
-            ? "Submit work below — notes or an artifact URL. On testnet this also calls markDelivered."
+            ? "Submit work below — notes or an artifact URL. On Arc this also calls markDelivered."
             : job.status === "Delivered" && isClient
               ? "Review the submission, then accept to release USDC on-chain."
               : isClient && !isWorker
@@ -323,7 +322,7 @@ export default function JobDetailPage() {
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={job.status} />
             <span className={live ? "badge badge-ok" : "badge badge-muted"}>
-              {live ? "On-chain escrow" : "Demo escrow"}
+              {live ? "On-chain escrow" : "Escrow pending"}
             </span>
             {job.reviewDeadline && job.status === "Delivered" && (
               <span className="text-xs text-[var(--muted)]">
@@ -363,12 +362,6 @@ export default function JobDetailPage() {
           );
         })}
       </ol>
-
-      <JobTimeline
-        status={job.status}
-        reviewDeadline={job.reviewDeadline}
-        deliveredAt={job.deliveredAt}
-      />
 
       <p className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--brand-soft)]/50 px-4 py-3 text-sm text-[var(--ink-soft)]">
         {hint}
