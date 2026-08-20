@@ -177,7 +177,7 @@ export default function JobDetailPage() {
       }
 
       const ok = await act("fund", { chainId: walletChain?.chainId });
-      if (ok) setStatusMsg("Escrow funded (demo mode)");
+      if (ok) setStatusMsg("Escrow funded");
     } catch (e) {
       setError((e as Error).message);
     }

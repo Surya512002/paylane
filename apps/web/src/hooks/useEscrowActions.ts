@@ -7,7 +7,7 @@ import {
   useWaitForTransactionReceipt,
   usePublicClient,
 } from "wagmi";
-import { keccak256, stringToHex, encodeEventTopics, decodeEventLog, type Hash } from "viem";
+import { keccak256, stringToHex, encodeEventTopics, decodeEventLog, formatUnits, type Hash } from "viem";
 import { escrowAbi, erc20Abi } from "@/lib/escrowAbi";
 import { minorToChainUnits } from "@/lib/networks";
 
@@ -27,7 +27,7 @@ export function useEscrowActions(cfg: Cfg | null) {
   const { isLoading: confirming } = useWaitForTransactionReceipt({ hash: lastHash });
 
   const ensureLive = useCallback(() => {
-    if (!cfg?.escrowAddress) throw new Error("Escrow not deployed — set NEXT_PUBLIC_ESCROW_ADDRESS");
+    if (!cfg?.escrowAddress) throw new Error("Escrow not deployed on this network");
     if (!address) throw new Error("Connect wallet first");
     return { escrow: cfg.escrowAddress, usdc: cfg.usdcAddress, account: address };
   }, [cfg, address]);
@@ -43,25 +43,49 @@ export function useEscrowActions(cfg: Cfg | null) {
         return { mode: "demo" as const };
       }
       if (!cfg?.escrowAddress) {
-        throw new Error(
-          "No Paylane escrow on this network. Switch to Arc Testnet or Base Sepolia in the header.",
-        );
+        throw new Error("No escrow contract on this network. Switch to a testnet with live escrow.");
       }
       const { escrow, usdc, account } = ensureLive();
-      if (!publicClient) throw new Error("RPC not ready");
+      if (!publicClient) throw new Error("RPC not ready — try refreshing the page");
 
-      const onChainAmount = minorToChainUnits(params.amountMinor, cfg!.usdcDecimals);
+      const onChainAmount = minorToChainUnits(params.amountMinor, cfg.usdcDecimals);
+      const humanAmount = formatUnits(onChainAmount, cfg.usdcDecimals);
 
-      setPending("Approving USDC…");
-      const approveHash = await writeContractAsync({
+      setPending("Checking USDC balance…");
+      const balance = await publicClient.readContract({
         address: usdc,
         abi: erc20Abi,
-        functionName: "approve",
-        args: [escrow, onChainAmount],
-      });
-      await publicClient.waitForTransactionReceipt({ hash: approveHash });
+        functionName: "balanceOf",
+        args: [account],
+      }) as bigint;
 
-      setPending("Creating on-chain job…");
+      if (balance < onChainAmount) {
+        const has = formatUnits(balance, cfg.usdcDecimals);
+        setPending(null);
+        throw new Error(
+          `Insufficient USDC: you have ${has} but need ${humanAmount}. Get testnet USDC from the Circle faucet (faucet.circle.com).`,
+        );
+      }
+
+      const existingAllowance = await publicClient.readContract({
+        address: usdc,
+        abi: erc20Abi,
+        functionName: "allowance",
+        args: [account, escrow],
+      }) as bigint;
+
+      if (existingAllowance < onChainAmount) {
+        setPending(`Approve ${humanAmount} USDC… (tx 1 of 2)`);
+        const approveHash = await writeContractAsync({
+          address: usdc,
+          abi: erc20Abi,
+          functionName: "approve",
+          args: [escrow, onChainAmount],
+        });
+        await publicClient.waitForTransactionReceipt({ hash: approveHash });
+      }
+
+      setPending(`Creating & funding escrow for ${humanAmount} USDC… (tx 2 of 2)`);
       const jobRef = keccak256(stringToHex(params.jobDbId));
       const createHash = await writeContractAsync({
         address: escrow,
@@ -97,9 +121,8 @@ export function useEscrowActions(cfg: Cfg | null) {
           /* skip */
         }
       }
-      if (onchainJobId == null) throw new Error("Could not parse JobCreated jobId");
+      if (onchainJobId == null) throw new Error("Could not parse JobCreated event — check the explorer");
 
-      setPending("Funding escrow…");
       const fundHash = await writeContractAsync({
         address: escrow,
         abi: escrowAbi,
@@ -120,34 +143,11 @@ export function useEscrowActions(cfg: Cfg | null) {
     [cfg, ensureLive, publicClient, writeContractAsync],
   );
 
-  const acceptOnchain = useCallback(
-    async (onchainJobId: string) => {
-      if (cfg?.demoMode) return { mode: "demo" as const };
-      if (!cfg?.escrowAddress) {
-        throw new Error("No Paylane escrow on this network. Switch chain in the header.");
-      }
-      const { escrow } = ensureLive();
-      if (!publicClient) throw new Error("RPC not ready");
-      setPending("Releasing to worker…");
-      const hash = await writeContractAsync({
-        address: escrow,
-        abi: escrowAbi,
-        functionName: "accept",
-        args: [BigInt(onchainJobId)],
-      });
-      setLastHash(hash);
-      await publicClient.waitForTransactionReceipt({ hash });
-      setPending(null);
-      return { mode: "live" as const, txHash: hash };
-    },
-    [cfg, ensureLive, publicClient, writeContractAsync],
-  );
-
   const assignOnchain = useCallback(
     async (onchainJobId: string, worker: `0x${string}`) => {
       if (cfg?.demoMode) return { mode: "demo" as const };
       if (!cfg?.escrowAddress) {
-        throw new Error("No Paylane escrow on this network. Switch chain in the header.");
+        throw new Error("No escrow on this network. Switch chain in the header.");
       }
       const { escrow } = ensureLive();
       if (!publicClient) throw new Error("RPC not ready");
@@ -166,11 +166,34 @@ export function useEscrowActions(cfg: Cfg | null) {
     [cfg, ensureLive, publicClient, writeContractAsync],
   );
 
+  const acceptOnchain = useCallback(
+    async (onchainJobId: string) => {
+      if (cfg?.demoMode) return { mode: "demo" as const };
+      if (!cfg?.escrowAddress) {
+        throw new Error("No escrow on this network. Switch chain in the header.");
+      }
+      const { escrow } = ensureLive();
+      if (!publicClient) throw new Error("RPC not ready");
+      setPending("Releasing USDC to worker…");
+      const hash = await writeContractAsync({
+        address: escrow,
+        abi: escrowAbi,
+        functionName: "accept",
+        args: [BigInt(onchainJobId)],
+      });
+      setLastHash(hash);
+      await publicClient.waitForTransactionReceipt({ hash });
+      setPending(null);
+      return { mode: "live" as const, txHash: hash };
+    },
+    [cfg, ensureLive, publicClient, writeContractAsync],
+  );
+
   const deliverOnchain = useCallback(
     async (onchainJobId: string, note: string) => {
       if (cfg?.demoMode) return { mode: "demo" as const };
       if (!cfg?.escrowAddress) {
-        throw new Error("No Paylane escrow on this network. Switch chain in the header.");
+        throw new Error("No escrow on this network. Switch chain in the header.");
       }
       const { escrow } = ensureLive();
       if (!publicClient) throw new Error("RPC not ready");

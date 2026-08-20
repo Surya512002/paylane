@@ -64,18 +64,18 @@ export default function HomePage() {
                   className="btn-primary w-full sm:w-auto"
                   onClick={() => void (w.isConnected ? w.signIn() : w.connectWallet())}
                 >
-                  {w.isConnected ? "Sign in to demo" : "Connect wallet"}
+                  {w.isConnected ? "Sign in" : "Connect wallet"}
                 </button>
               ) : (
                 <Link href="/jobs/new" className="btn-primary w-full sm:w-auto">
-                  Post a funded job
+                  Post a job
                 </Link>
               )}
               <Link href="/jobs" className="btn-secondary w-full sm:w-auto">
                 Browse marketplace
               </Link>
-              <Link href="/agents" className="btn-ghost w-full justify-center sm:w-auto">
-                Try a paid API →
+              <Link href="/docs" className="btn-ghost w-full justify-center sm:w-auto">
+                Read the docs →
               </Link>
             </HeroLine>
           </HeroCopy>
@@ -110,18 +110,17 @@ export default function HomePage() {
         <Reveal>
           <div className="section-panel p-5 sm:p-7">
             <div className="lane-divider mb-4 w-12" />
-            <h2 className="section-title">90-second live demo</h2>
+            <h2 className="section-title">Getting started</h2>
             <p className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
-              Everything below is real testnet — MetaMask, USDC, and PaylaneEscrow. No simulated
-              balances.
+              Paylane runs on real blockchain infrastructure. Follow these steps to use escrow-backed jobs.
             </p>
             <ol className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {[
-                { n: "1", t: "Connect", d: "MetaMask on Arc or Base Sepolia" },
-                { n: "2", t: "Sign in", d: "SIWE message in the wallet" },
-                { n: "3", t: "Fund", d: "Approve USDC + lock escrow" },
-                { n: "4", t: "Submit", d: "Assign yourself, post delivery" },
-                { n: "5", t: "Release", d: "Accept — worker is paid on-chain" },
+                { n: "1", t: "Connect wallet", d: "MetaMask or any EVM wallet on Arc Testnet or Base Sepolia" },
+                { n: "2", t: "Sign in (SIWE)", d: "Sign a message to authenticate — no password needed" },
+                { n: "3", t: "Post & fund", d: "Create a job, approve USDC, and lock it in escrow (2 txs)" },
+                { n: "4", t: "Work & submit", d: "Assign a worker, submit delivery notes and artifacts" },
+                { n: "5", t: "Accept & settle", d: "Client accepts → USDC releases to worker on-chain" },
               ].map((s) => (
                 <li key={s.n} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
                   <p className="font-display text-2xl font-bold text-[var(--brand)]/30">{s.n}</p>
@@ -132,18 +131,19 @@ export default function HomePage() {
             </ol>
             <div className="mt-5 flex flex-wrap gap-2">
               <Link href="/jobs/new" className="btn-primary text-sm">
-                Start the demo
+                Post your first job
               </Link>
-              {w.cfg?.supportedChains?.find((c) => c.faucetUrl)?.faucetUrl && (
-                <a
-                  className="btn-secondary text-sm"
-                  href={w.cfg.supportedChains.find((c) => c.faucetUrl)?.faucetUrl ?? "https://faucet.circle.com"}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Get testnet USDC
-                </a>
-              )}
+              <a
+                className="btn-secondary text-sm"
+                href="https://faucet.circle.com"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Get testnet USDC
+              </a>
+              <Link href="/docs" className="btn-ghost text-sm">
+                Full documentation →
+              </Link>
             </div>
           </div>
         </Reveal>
