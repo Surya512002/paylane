@@ -85,8 +85,8 @@ export default function HomePage() {
       <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <Stagger className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: Globe, label: "Networks", value: "Arc + Base", hint: "Testnet live now" },
-            { icon: Shield, label: "Escrow fee", value: "2%", hint: "Only on worker release" },
+            { icon: Globe, label: "Network", value: "Arc Testnet", hint: "Chain 5042002 · live" },
+            { icon: Shield, label: "Escrow fee", value: "0.1%", hint: "Only on worker release" },
             { icon: Zap, label: "API pay", value: "x402", hint: "HTTP 402 → unlock" },
             { icon: Receipt, label: "Custody", value: "None", hint: "Funds stay in contract" },
           ].map((s) => (
@@ -118,7 +118,7 @@ export default function HomePage() {
               {[
                 { n: "1", t: "Connect wallet", d: "MetaMask on Arc Testnet (chain ID 5042002)" },
                 { n: "2", t: "Sign in (SIWE)", d: "Sign a message to authenticate — no password needed" },
-                { n: "3", t: "Post & fund", d: "Create a job, approve USDC, and lock it in escrow (2 txs)" },
+                { n: "3", t: "Post & fund", d: "Create a job, approve USDC if needed, then createJob + fundJob on escrow" },
                 { n: "4", t: "Work & submit", d: "Assign a worker, submit delivery notes and artifacts" },
                 { n: "5", t: "Accept & settle", d: "Client accepts → USDC releases to worker on-chain" },
               ].map((s) => (

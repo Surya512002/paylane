@@ -10,7 +10,8 @@
   "deployedAt": "2026-07-28T05:56:58Z",
   "upgradeable": true,
   "verified": true,
-  "verifiedAt": "2026-07-28T16:40:00Z",
+  "platformFeeBps": 10,
+  "platformFeePercent": "0.1%",
   "explorer": "https://testnet.arcscan.app/address/0x144762e02f9676593D955CF0d184323474C79805",
   "implementationExplorer": "https://testnet.arcscan.app/address/0x97D7daD7c1F932e6C3F2bDdddAB607A3243eD7a5"
 }

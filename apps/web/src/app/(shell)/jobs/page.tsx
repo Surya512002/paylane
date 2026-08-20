@@ -45,7 +45,7 @@ export default function JobsPage() {
       <PageHero
         eyebrow="Mode A · Hire / Work"
         title="Jobs marketplace"
-        subtitle="Escrow-backed freelance work on Arc and Base testnets. Fund USDC on-chain, then workers submit against a locked checklist."
+        subtitle="Escrow-backed freelance work on Arc Testnet. Fund USDC on-chain, then workers submit against a locked checklist."
         imageSrc="/brand/paylane-mode-escrow.png"
         imageAlt="Escrow illustration"
         actions={

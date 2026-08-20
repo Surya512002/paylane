@@ -1,7 +1,7 @@
 # Paylane Freelance Job State Machine (Mode A)
 
-**Version:** 1.0.0  
-**Last updated:** 2026-07-28  
+**Version:** 1.1.0  
+**Last updated:** 2026-08-20  
 **Related:** `CONTRACT_SPEC.md`, `MONEY_RULES.md`, `DISPUTE_POLICY.md`
 
 This is the full off-chain + on-chain state machine for Mode A (freelance escrow). Mode B (API pay) has **no** escrow states — see `MONEY_RULES.md`.

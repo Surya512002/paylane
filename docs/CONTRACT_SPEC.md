@@ -1,9 +1,9 @@
 # Paylane Escrow Contract Spec (Mode A)
 
-**Version:** 1.0.0  
-**Last updated:** 2026-07-28  
-**Network (MVP):** Arc Testnet  
-**Token:** USDC (6 decimals; amounts in minor units / `uint256`)
+**Version:** 1.1.0  
+**Last updated:** 2026-08-20  
+**Network:** Arc Testnet (live)  
+**Token:** USDC — ERC-20 interface uses **6 decimals** on Arc; app ledger uses 6-decimal minor units
 
 This document is the source of truth for Mode A (freelance escrow) smart contracts. Mode B (x402 / Gateway nanopayments) is **off-contract** and covered in `MONEY_RULES.md`.
 

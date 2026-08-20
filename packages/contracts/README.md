@@ -1,66 +1,66 @@
-## Foundry
+# Paylane Contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Foundry project for **PaylaneEscrow** — non-custodial USDC escrow for Mode A (freelance work).
 
-Foundry consists of:
+## Contracts
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+| Contract | Description |
+|----------|-------------|
+| `PaylaneEscrowUpgradeable.sol` | UUPS upgradeable logic (production) |
+| `PaylaneEscrow.sol` | Immutable variant (unit tests) |
+| ERC1967 proxy | Stable address; stores job state + balances |
 
-## Documentation
+## Arc Testnet deployment
 
-https://book.getfoundry.sh/
+| Field | Value |
+|-------|--------|
+| Proxy | `0x144762e02f9676593D955CF0d184323474C79805` |
+| Implementation | `0x97D7daD7c1F932e6C3F2bDdddAB607A3243eD7a5` |
+| USDC | `0x3600000000000000000000000000000000000000` |
+| Chain ID | `5042002` |
+| Platform fee | **10 bps (0.1%)** |
+| Manifest | `deployments/arc-testnet.json` |
 
-## Usage
+Explorer: https://testnet.arcscan.app/address/0x144762e02f9676593D955CF0d184323474C79805
 
-### Build
+## Build & test
 
-```shell
-$ forge build
+```bash
+forge build
+forge test
 ```
 
-### Test
+22 tests cover fund, accept, auto-release, dispute, cancel, pause, and fee paths.
 
-```shell
-$ forge test
+## Deploy
+
+```bash
+export PRIVATE_KEY=0x...
+export ARC_RPC=https://rpc.testnet.arc.network
+forge script script/DeployUpgradeable.s.sol --rpc-url $ARC_RPC --broadcast
 ```
 
-### Format
+Or from repo root: `./scripts/deploy-arc-testnet.sh`
 
-```shell
-$ forge fmt
+## Owner functions
+
+```bash
+# Set platform fee to 0.1%
+cast send $PROXY "setPlatformFeeBps(uint16)" 10 --rpc-url $ARC_RPC --private-key $PRIVATE_KEY
+
+# Pause / unpause
+cast send $PROXY "pause()" --rpc-url $ARC_RPC --private-key $PRIVATE_KEY
 ```
 
-### Gas Snapshots
+## Fee formula
 
-```shell
-$ forge snapshot
+```
+fee = amount * platformFeeBps / 10_000
+workerNet = amount - fee
 ```
 
-### Anvil
+Default `platformFeeBps = 10` (0.1%). Max fee cap: 1000 bps (10%).
 
-```shell
-$ anvil
-```
+## Spec
 
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+Full ABI and state machine: [docs/CONTRACT_SPEC.md](../../docs/CONTRACT_SPEC.md)

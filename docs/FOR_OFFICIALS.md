@@ -1,6 +1,6 @@
 # For Officials — Arc / Circle Alignment
 
-**Version:** 1.0.0 · **Last updated:** 2026-07-28
+**Version:** 1.1.0 · **Last updated:** 2026-08-20
 
 ## Problem
 
@@ -16,7 +16,8 @@ Freelance work and machine-to-machine API calls need **dollar settlement** with 
 
 ## Arc-native settlement
 
-- Primary network: **Arc testnet** (MVP) → Arc mainnet via config
+- Primary network: **Arc Testnet** (live escrow deployed) → Arc mainnet via env
+- Platform fee: **0.1%** on worker release (on-chain `platformFeeBps = 10`)
 - Unit of account: **USDC**
 - Explorers linked from receipts
 

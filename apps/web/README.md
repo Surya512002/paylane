@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Paylane Web App
 
-## Getting Started
+Next.js 15 app for Paylane — Arc Testnet escrow, SIWE auth, job marketplace, x402 demo APIs, and in-app docs.
 
-First, run the development server:
+## Setup
 
 ```bash
+cp .env.example .env
+npm install
+npm run db:push
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment (Arc Testnet — default)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | PostgreSQL |
+| `NEXT_PUBLIC_ACTIVE_CHAIN` | `arc-testnet` |
+| `NEXT_PUBLIC_SUPPORTED_CHAINS` | `arc-testnet` (add `base-sepolia` for multi-chain) |
+| `NEXT_PUBLIC_ESCROW_ADDRESS` | Live proxy `0x1447…9805` |
+| `DEMO_MODE` | `false` for live escrow |
+| `PLATFORM_FEE_BPS` | `10` (0.1%) |
 
-## Learn More
+See `.env.example` and [docs/VERCEL_ENV.md](../../docs/VERCEL_ENV.md).
 
-To learn more about Next.js, take a look at the following resources:
+## Key routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Route | Description |
+|-------|-------------|
+| `/` | Landing + getting started |
+| `/jobs` | Marketplace |
+| `/jobs/new` | Post a job |
+| `/jobs/[id]` | Fund, assign, deliver, accept |
+| `/dashboard` | Your jobs |
+| `/settings` | Chain, escrow, LIVE status |
+| `/docs` | Documentation |
+| `/trust` | Trust center |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+```bash
+npm run dev          # Next.js dev server
+npm run build        # Production build
+npm test             # Vitest
+npm run db:push      # Prisma schema push
+npm run db:seed      # Seed demo users/jobs
+npm run cron:auto-release
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Live testnet flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Wallet on Arc Testnet (`5042002`)
+2. Sign in (SIWE)
+3. Post job → Publish → Approve USDC & fund escrow
+4. Assign → Submit → Accept
+
+Funding uses ERC-20 USDC (6 decimals on Arc). See [Arc Testnet guide](../../docs/ARC_TESTNET_GUIDE.md).

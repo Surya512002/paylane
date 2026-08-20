@@ -1,6 +1,6 @@
 # Money Rules
 
-**Version:** 1.0.0 · **Last updated:** 2026-07-28
+**Version:** 1.1.0 · **Last updated:** 2026-08-20
 
 Live configurable defaults (env):
 
