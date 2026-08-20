@@ -16,10 +16,9 @@ function envInt(key: string, fallback: number): number {
 
 const activeChain = resolveActiveChain();
 const supportedChains = resolveSupportedChains();
-const isProd = process.env.NODE_ENV === "production";
 
-/** DEMO_MODE defaults false in production builds; true locally for faster onboarding. */
-const demoMode = envBool("DEMO_MODE", !isProd);
+/** Live testnet is the default. Simulated escrow only if DEMO_MODE=true and no escrow is configured. */
+const demoMode = envBool("DEMO_MODE", false) && !activeChain.escrowAddress;
 
 export const config = {
   appName: "Paylane",
@@ -71,7 +70,7 @@ function publicChain(preset: ChainPreset) {
     explorerName: preset.explorerName,
     faucetUrl: preset.faucetUrl ?? null,
     isTestnet: preset.isTestnet,
-    live: !demoMode && Boolean(preset.escrowAddress),
+    live: Boolean(preset.escrowAddress),
   };
 }
 

@@ -17,7 +17,7 @@ interface JobRow {
   description?: string;
 }
 
-const FILTERS = ["All", "Published", "Funded", "InProgress", "Delivered", "Disputed"] as const;
+const FILTERS = ["All", "Published", "Funded", "Assigned", "InProgress", "Delivered", "Disputed"] as const;
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState<JobRow[]>([]);

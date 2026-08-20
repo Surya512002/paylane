@@ -10,6 +10,11 @@ type ChainOption = {
   name: string;
   family: string;
   live: boolean;
+  escrowAddress?: string | null;
+  usdcAddress?: string;
+  usdcDecimals?: number;
+  explorerUrl?: string;
+  explorerName?: string;
 };
 
 function shortName(name: string) {
@@ -80,16 +85,17 @@ export function resolveWalletChainConfig(
 ) {
   if (chainId == null) return null;
   const match = apiChains.find((c) => c.chainId === chainId);
-  if (!match) return null;
   const preset = supportedChainPresets.find((p) => p.chainId === chainId);
-  if (!preset) return null;
+  if (!match && !preset) return null;
+  const usdcAddress = match?.usdcAddress ?? preset?.usdcAddress;
+  if (!usdcAddress) return null;
   return {
     chainId,
-    chainKey: match.key,
-    escrowAddress: preset.escrowAddress ?? null,
-    usdcAddress: preset.usdcAddress,
-    usdcDecimals: preset.usdcDecimals,
-    explorerUrl: preset.explorerUrl,
-    explorerName: preset.explorerName,
+    chainKey: match?.key ?? preset!.key,
+    escrowAddress: (match?.escrowAddress || preset?.escrowAddress) ?? null,
+    usdcAddress,
+    usdcDecimals: match?.usdcDecimals ?? preset?.usdcDecimals ?? 6,
+    explorerUrl: match?.explorerUrl || preset?.explorerUrl || "",
+    explorerName: match?.explorerName || preset?.explorerName || "Explorer",
   };
 }

@@ -18,12 +18,17 @@ export async function GET(req: NextRequest) {
       include: { client: true, worker: true },
       orderBy: { updatedAt: "desc" },
     });
-    const published = await prisma.job.findMany({
-      where: { status: "Published" },
-      include: { client: true },
+    const marketplace = await prisma.job.findMany({
+      where: {
+        OR: [{ status: "Published" }, { status: "Funded", workerId: null }],
+      },
+      include: { client: true, worker: true },
       orderBy: { createdAt: "desc" },
     });
-    const merged = [...jobs, ...published.filter((p) => !jobs.find((j) => j.id === p.id))];
+    const merged = [
+      ...jobs,
+      ...marketplace.filter((p) => !jobs.find((j) => j.id === p.id)),
+    ];
     return jsonOk({ jobs: serialize(merged) });
   } catch (e) {
     return handleRouteError(e);

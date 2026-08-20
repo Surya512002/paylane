@@ -15,15 +15,9 @@ describe("job transitions guards", () => {
     ).toThrow(TransitionError);
   });
 
-  it("allows revision from Delivered", () => {
+  it("allows deliver from Assigned so workers can submit without a separate start click", () => {
     expect(() =>
-      assertTransition(
-        {
-          id: "j1",
-          status: JobStatus.Delivered,
-        } as never,
-        "revision",
-      ),
+      assertTransition({ id: "j1", status: JobStatus.Assigned } as never, "deliver"),
     ).not.toThrow();
   });
 });

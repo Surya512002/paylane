@@ -39,8 +39,13 @@ export function useEscrowActions(cfg: Cfg | null) {
       worker?: `0x${string}`;
       deadlineUnix?: number;
     }) => {
-      if (cfg?.demoMode || !cfg?.escrowAddress) {
+      if (cfg?.demoMode) {
         return { mode: "demo" as const };
+      }
+      if (!cfg?.escrowAddress) {
+        throw new Error(
+          "No Paylane escrow on this network. Switch to Arc Testnet or Base Sepolia in the header.",
+        );
       }
       const { escrow, usdc, account } = ensureLive();
       if (!publicClient) throw new Error("RPC not ready");
@@ -117,7 +122,10 @@ export function useEscrowActions(cfg: Cfg | null) {
 
   const acceptOnchain = useCallback(
     async (onchainJobId: string) => {
-      if (cfg?.demoMode || !cfg?.escrowAddress) return { mode: "demo" as const };
+      if (cfg?.demoMode) return { mode: "demo" as const };
+      if (!cfg?.escrowAddress) {
+        throw new Error("No Paylane escrow on this network. Switch chain in the header.");
+      }
       const { escrow } = ensureLive();
       if (!publicClient) throw new Error("RPC not ready");
       setPending("Releasing to worker…");
@@ -135,9 +143,35 @@ export function useEscrowActions(cfg: Cfg | null) {
     [cfg, ensureLive, publicClient, writeContractAsync],
   );
 
+  const assignOnchain = useCallback(
+    async (onchainJobId: string, worker: `0x${string}`) => {
+      if (cfg?.demoMode) return { mode: "demo" as const };
+      if (!cfg?.escrowAddress) {
+        throw new Error("No Paylane escrow on this network. Switch chain in the header.");
+      }
+      const { escrow } = ensureLive();
+      if (!publicClient) throw new Error("RPC not ready");
+      setPending("Assigning worker on-chain…");
+      const hash = await writeContractAsync({
+        address: escrow,
+        abi: escrowAbi,
+        functionName: "assignWorker",
+        args: [BigInt(onchainJobId), worker],
+      });
+      setLastHash(hash);
+      await publicClient.waitForTransactionReceipt({ hash });
+      setPending(null);
+      return { mode: "live" as const, txHash: hash };
+    },
+    [cfg, ensureLive, publicClient, writeContractAsync],
+  );
+
   const deliverOnchain = useCallback(
     async (onchainJobId: string, note: string) => {
-      if (cfg?.demoMode || !cfg?.escrowAddress) return { mode: "demo" as const };
+      if (cfg?.demoMode) return { mode: "demo" as const };
+      if (!cfg?.escrowAddress) {
+        throw new Error("No Paylane escrow on this network. Switch chain in the header.");
+      }
       const { escrow } = ensureLive();
       if (!publicClient) throw new Error("RPC not ready");
       setPending("Marking delivered on-chain…");
@@ -157,6 +191,7 @@ export function useEscrowActions(cfg: Cfg | null) {
 
   return {
     fundOnchain,
+    assignOnchain,
     acceptOnchain,
     deliverOnchain,
     pending,

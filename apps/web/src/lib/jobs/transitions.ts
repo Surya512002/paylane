@@ -45,7 +45,7 @@ const ALLOWED: Record<JobAction, JobStatus[]> = {
   fund: [JobStatus.Published],
   assign: [JobStatus.Funded],
   start: [JobStatus.Assigned],
-  deliver: [JobStatus.InProgress, JobStatus.RevisionRequested],
+  deliver: [JobStatus.Assigned, JobStatus.InProgress, JobStatus.RevisionRequested],
   revision: [JobStatus.Delivered],
   accept: [JobStatus.Delivered, JobStatus.RevisionRequested],
   dispute: [JobStatus.Delivered, JobStatus.RevisionRequested, JobStatus.InProgress],
@@ -138,7 +138,9 @@ export async function applyJobTransition(
         const txHash = payload.txHash as string | undefined;
         let onchainJobId = payload.onchainJobId as string | undefined;
         if (!config.demoMode && (!txHash || !onchainJobId)) {
-          throw new TransitionError("txHash and onchainJobId required");
+          throw new TransitionError(
+            "On-chain fund is required: approve USDC in your wallet, then wait for createJob + fundJob. txHash and onchainJobId were missing.",
+          );
         }
         if (!config.demoMode && txHash) {
           const fundChainId =

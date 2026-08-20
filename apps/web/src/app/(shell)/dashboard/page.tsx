@@ -82,7 +82,7 @@ export default function DashboardPage() {
         />
         <EmptyState
           title="Sign in to open your dashboard"
-          description="Connect a wallet on Arc Testnet and Sign in (SIWE), or use Quick login while DEMO_MODE is on."
+          description="Connect a wallet on Arc Testnet or Base Sepolia and Sign in (SIWE). Escrow is live on-chain — not a demo."
         />
       </div>
     );
@@ -99,7 +99,7 @@ export default function DashboardPage() {
         subtitle={
           live
             ? "Live escrow is connected. Fund jobs from your wallet — USDC locks in PaylaneEscrow before work starts."
-            : "You're in simulated escrow mode. Deploy or set NEXT_PUBLIC_ESCROW_ADDRESS and DEMO_MODE=false for live Arc funding."
+            : "Switch your wallet to Arc Testnet or Base Sepolia. Escrow contracts are live on both testnets."
         }
         imageSrc="/brand/paylane-mode-escrow.png"
         imageAlt="Escrow illustration"

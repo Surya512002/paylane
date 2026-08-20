@@ -38,6 +38,7 @@ const CHAIN_PRESETS: Record<ChainKey, ChainPreset> = {
     nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
     faucetUrl: "https://faucet.circle.com",
     isTestnet: true,
+    escrowAddress: "0x144762e02f9676593D955CF0d184323474C79805",
   },
   "arc-mainnet": {
     key: "arc-mainnet",
@@ -68,6 +69,7 @@ const CHAIN_PRESETS: Record<ChainKey, ChainPreset> = {
     nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
     faucetUrl: "https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet",
     isTestnet: true,
+    escrowAddress: "0x7275FB5e77c18143F8f87d8B1485Ca840ADec1eB",
   },
   "base-mainnet": {
     key: "base-mainnet",
@@ -130,7 +132,8 @@ function applyEnvOverrides(base: ChainPreset, activeKey: ChainKey): ChainPreset 
     base.name;
   const escrowAddress =
     resolveEscrowForKey(base.key) ??
-    (isActive ? (env("NEXT_PUBLIC_ESCROW_ADDRESS") as `0x${string}` | undefined) : undefined);
+    (isActive ? (env("NEXT_PUBLIC_ESCROW_ADDRESS") as `0x${string}` | undefined) : undefined) ??
+    base.escrowAddress;
 
   return {
     ...base,

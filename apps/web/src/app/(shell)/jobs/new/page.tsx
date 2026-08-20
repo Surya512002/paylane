@@ -75,7 +75,7 @@ export default function NewJobPage() {
       <PageHero
         eyebrow="Mode A · New job"
         title="Post escrow-backed work"
-        subtitle={`Funds lock on ${cfg?.chainName ?? "Arc"} before paid work starts. Add clear checklist items so “done” isn’t ambiguous.`}
+        subtitle={`USDC locks in PaylaneEscrow on ${cfg?.chainName ?? "Arc Testnet"} — real testnet txs, not a simulation. Get USDC from the Circle faucet if needed.`}
         imageSrc="/brand/paylane-mode-escrow.png"
         imageAlt=""
       />
