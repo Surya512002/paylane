@@ -39,13 +39,48 @@ enum LedgerKind {
   platform_fee
 }
 
+enum ProposalStatus {
+  Pending
+  Accepted
+  Rejected
+  Withdrawn
+}
+
+enum Availability {
+  OpenToWork
+  Busy
+  NotLooking
+}
+
 model User {
   id            String   @id @default(cuid())
   walletAddress String   @unique
   displayName   String?
   email         String?
   isAdmin       Boolean  @default(false)
+  /// Legacy field — prefer trustScore for UI
   reputation    Int      @default(100)
+
+  /// Public profile
+  headline      String?
+  bio           String?
+  skills        String[] @default([])
+  roleTags      String[] @default([]) // e.g. freelancer, agent, api-seller
+  availability  Availability @default(OpenToWork)
+  profilePublic Boolean  @default(true)
+  location      String?
+  portfolioUrl  String?
+  githubUrl     String?
+  websiteUrl    String?
+  hourlyRateMinor BigInt?
+
+  /// Scores (0–100 trust; merit grows with completed work)
+  trustScore    Int      @default(100)
+  meritScore    Int      @default(0)
+  completedJobs Int      @default(0)
+  jobsHired     Int      @default(0)
+  avgRating     Float?
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -55,6 +90,7 @@ model User {
   disputesOpened Dispute[]       @relation("DisputeOpener")
   reviewsGiven   Review[]        @relation("ReviewsGiven")
   reviewsReceived Review[]       @relation("ReviewsReceived")
+  proposals      Proposal[]
   paidResources  PaidResource[]
   usageEvents    UsageEvent[]
   ledgerEntries  LedgerEntry[]
@@ -110,10 +146,29 @@ model Job {
   deliveries Delivery[]
   disputes   Dispute[]
   reviews    Review[]
+  proposals  Proposal[]
   ledger     LedgerEntry[]
 
   @@index([status])
   @@index([clientId])
+  @@index([workerId])
+}
+
+model Proposal {
+  id                  String         @id @default(cuid())
+  jobId               String
+  workerId            String
+  coverLetter         String
+  proposedAmountMinor BigInt?
+  status              ProposalStatus @default(Pending)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  job    Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  worker User @relation(fields: [workerId], references: [id])
+
+  @@unique([jobId, workerId])
+  @@index([jobId, status])
   @@index([workerId])
 }
 

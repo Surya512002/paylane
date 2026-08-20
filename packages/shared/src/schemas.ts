@@ -56,5 +56,26 @@ export const jobStatusSchema = z.enum([
   "Expired",
 ]);
 
-export type CreateJobInput = z.infer<typeof createJobSchema>;
-export type PaidResourceInput = z.infer<typeof paidResourceSchema>;
+export const updateProfileSchema = z.object({
+  displayName: z.string().trim().min(2).max(80).optional().nullable(),
+  headline: z.string().trim().min(3).max(160).optional().nullable(),
+  bio: z.string().trim().max(4000).optional().nullable(),
+  skills: z.array(z.string().trim().min(1).max(40)).max(24).optional(),
+  roleTags: z.array(z.string().trim().min(1).max(40)).max(8).optional(),
+  availability: z.enum(["OpenToWork", "Busy", "NotLooking"]).optional(),
+  profilePublic: z.boolean().optional(),
+  location: z.string().trim().max(120).optional().nullable(),
+  portfolioUrl: z.string().url().max(500).optional().nullable().or(z.literal("")),
+  githubUrl: z.string().url().max(500).optional().nullable().or(z.literal("")),
+  websiteUrl: z.string().url().max(500).optional().nullable().or(z.literal("")),
+  hourlyRateMinor: z.string().regex(/^\d+$/).optional().nullable(),
+  email: z.string().email().max(200).optional().nullable().or(z.literal("")),
+});
+
+export const createProposalSchema = z.object({
+  coverLetter: z.string().trim().min(20).max(4000),
+  proposedAmountMinor: z.string().regex(/^\d+$/).optional().nullable(),
+});
+
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+export type CreateProposalInput = z.infer<typeof createProposalSchema>;

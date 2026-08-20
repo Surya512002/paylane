@@ -4,6 +4,7 @@ import { prisma } from "../db";
 import { writeAuditLog } from "../audit";
 import { config } from "../config";
 import { verifyFundTx } from "../chain";
+import { bumpScoresOnJobSuccess, penalizeOnDispute } from "../scores";
 
 export type JobAction =
   | "publish"
@@ -116,7 +117,10 @@ export async function applyJobTransition(
   actor: Actor,
   payload: Record<string, unknown> = {},
 ) {
-  return prisma.$transaction(async (tx) => {
+  const jobBefore = await prisma.job.findUnique({ where: { id: jobId } });
+  if (!jobBefore) throw new TransitionError("Job not found", 404);
+
+  const updated = await prisma.$transaction(async (tx) => {
     const job = await tx.job.findUnique({ where: { id: jobId } });
     if (!job) throw new TransitionError("Job not found", 404);
 
@@ -383,6 +387,16 @@ export async function applyJobTransition(
         throw new TransitionError("Unknown action");
     }
   });
+
+  if (action === "accept" || action === "autoRelease") {
+    await bumpScoresOnJobSuccess(jobBefore.workerId, jobBefore.clientId);
+  }
+  if (action === "dispute") {
+    const parties = [jobBefore.clientId, jobBefore.workerId].filter(Boolean) as string[];
+    await penalizeOnDispute(parties);
+  }
+
+  return updated;
 }
 
 export async function runAutoReleaseCrank() {

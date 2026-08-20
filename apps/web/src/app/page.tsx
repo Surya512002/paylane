@@ -229,12 +229,12 @@ export default function HomePage() {
         </Reveal>
         <QuickLinks
           links={[
+            { href: "/talent", label: "Talent board", desc: "Hire freelancers & agents by skill" },
+            { href: "/profile", label: "Your profile", desc: "Skills, merit & trust scores" },
             { href: "/dashboard", label: "Dashboard", desc: "Jobs needing action, volume, roles" },
             { href: "/receipts", label: "Ledger", desc: "Every fund, release, and API pay" },
             { href: "/trust", label: "Trust Center", desc: "Money rules, disputes, risk" },
-            { href: "/settings", label: "Live status", desc: "Escrow addresses & explorers" },
             { href: "/docs/networks", label: "Networks", desc: "Arc Testnet (USDC native)" },
-            { href: "/docs/for-officials", label: "For officials", desc: "Arc / Circle alignment" },
           ]}
         />
       </section>

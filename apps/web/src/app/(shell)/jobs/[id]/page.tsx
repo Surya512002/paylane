@@ -12,6 +12,8 @@ import { NetworkBanner } from "@/components/NetworkBanner";
 import { useEscrowActions } from "@/hooks/useEscrowActions";
 import { resolveWalletChainConfig } from "@/components/ChainSwitcher";
 import { formatPlatformFeePercent } from "@/lib/money";
+import { JobProposals } from "@/components/JobProposals";
+import Link from "next/link";
 
 interface DeliveryRow {
   id: string;
@@ -390,14 +392,22 @@ export default function JobDetailPage() {
           <p>
             <span className="text-[var(--muted)]">Client</span>
             <br />
-            <span className="break-all font-mono text-xs">{job.client.walletAddress}</span>
+            <Link href={`/talent/${job.client.id}`} className="break-all font-mono text-xs text-[var(--brand)]">
+              {job.client.walletAddress}
+            </Link>
           </p>
           <p>
             <span className="text-[var(--muted)]">Worker</span>
             <br />
-            <span className="break-all font-mono text-xs">
-              {job.worker?.walletAddress ?? "Unassigned — assign a wallet to unlock submit"}
-            </span>
+            {job.worker ? (
+              <Link href={`/talent/${job.worker.id}`} className="break-all font-mono text-xs text-[var(--brand)]">
+                {job.worker.walletAddress}
+              </Link>
+            ) : (
+              <span className="break-all font-mono text-xs">
+                Unassigned — accept a proposal or assign a wallet
+              </span>
+            )}
           </p>
           {job.onchainJobId && (
             <p className="text-xs text-[var(--muted)]">On-chain job #{job.onchainJobId}</p>
@@ -425,6 +435,14 @@ export default function JobDetailPage() {
           )}
         </div>
       </div>
+
+      <JobProposals
+        jobId={job.id}
+        jobStatus={job.status}
+        isClient={Boolean(isClient)}
+        hasWorker={Boolean(job.worker)}
+        isSignedIn={Boolean(me)}
+      />
 
       <div className="card space-y-3">
         <h2 className="font-display text-lg font-semibold">Work submissions</h2>

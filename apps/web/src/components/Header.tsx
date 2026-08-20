@@ -25,14 +25,17 @@ export function Header() {
 
   const hireLinks = [
     { href: "/jobs", label: "Jobs" },
+    { href: "/talent", label: "Talent" },
     { href: "/jobs/new", label: "Post" },
+    { href: "/profile", label: "Profile" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/receipts", label: "Ledger" },
-    { href: "/trust", label: "Trust" },
   ];
   const apiLinks = [
     { href: "/api-seller", label: "Sell API" },
     { href: "/agents", label: "Agents" },
+    { href: "/talent", label: "Talent" },
+    { href: "/profile", label: "Profile" },
     { href: "/receipts", label: "Ledger" },
     { href: "/settings", label: "Settings" },
   ];
