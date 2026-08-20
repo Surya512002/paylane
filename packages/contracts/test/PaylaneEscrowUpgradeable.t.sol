@@ -41,7 +41,7 @@ contract PaylaneEscrowUpgradeableTest is Test {
         vm.prank(client);
         escrow.accept(jobId);
 
-        uint256 fee = (uint256(AMOUNT) * 200) / 10_000;
+        uint256 fee = (uint256(AMOUNT) * 10) / 10_000;
         assertEq(usdc.balanceOf(worker), AMOUNT - fee);
         assertEq(usdc.balanceOf(feeRecipient), fee);
     }

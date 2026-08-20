@@ -6,7 +6,7 @@ Live configurable defaults (env):
 
 | Param | Default | Env |
 |-------|---------|-----|
-| Platform fee | 2% (200 bps) | `PLATFORM_FEE_BPS` |
+| Platform fee | 0.1% (10 bps) | `PLATFORM_FEE_BPS` |
 | Review window | 72 hours | `REVIEW_WINDOW_HOURS` |
 | Revision limit | 2 | `REVISION_LIMIT` |
 | Dispute evidence | 72 hours | `DISPUTE_EVIDENCE_HOURS` |

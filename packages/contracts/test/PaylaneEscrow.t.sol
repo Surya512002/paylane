@@ -48,7 +48,7 @@ contract PaylaneEscrowTest is Test {
         vm.prank(client);
         escrow.accept(jobId);
 
-        uint256 fee = (uint256(AMOUNT) * 200) / 10_000;
+        uint256 fee = (uint256(AMOUNT) * 10) / 10_000;
         assertEq(usdc.balanceOf(worker), AMOUNT - fee);
         assertEq(usdc.balanceOf(feeRecipient), fee);
         (,,,,,, PaylaneEscrow.JobStatus status,,) = escrow.jobs(jobId);
@@ -63,7 +63,7 @@ contract PaylaneEscrowTest is Test {
         vm.warp(block.timestamp + 3 days);
         escrow.autoRelease(jobId);
 
-        uint256 fee = (uint256(AMOUNT) * 200) / 10_000;
+        uint256 fee = (uint256(AMOUNT) * 10) / 10_000;
         assertEq(usdc.balanceOf(worker), AMOUNT - fee);
         (,,,,,, PaylaneEscrow.JobStatus status,,) = escrow.jobs(jobId);
         assertEq(uint256(status), uint256(PaylaneEscrow.JobStatus.AutoReleased));
@@ -114,7 +114,7 @@ contract PaylaneEscrowTest is Test {
         vm.prank(arbitrator);
         escrow.resolveDispute(jobId, AMOUNT, 0);
 
-        uint256 fee = (uint256(AMOUNT) * 200) / 10_000;
+        uint256 fee = (uint256(AMOUNT) * 10) / 10_000;
         assertEq(usdc.balanceOf(worker), AMOUNT - fee);
         assertEq(usdc.balanceOf(feeRecipient), fee);
     }
@@ -132,7 +132,7 @@ contract PaylaneEscrowTest is Test {
         vm.prank(arbitrator);
         escrow.resolveDispute(jobId, toWorker, toClient);
 
-        uint256 fee = (uint256(toWorker) * 200) / 10_000;
+        uint256 fee = (uint256(toWorker) * 10) / 10_000;
         assertEq(usdc.balanceOf(worker), toWorker - fee);
         assertEq(usdc.balanceOf(client), clientBefore + toClient);
         assertEq(usdc.balanceOf(feeRecipient), fee);

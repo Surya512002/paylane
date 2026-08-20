@@ -6,7 +6,7 @@ Paylane supports **Arc** and **Base** in one app. Users pick the network from th
 
 | Key | Chain ID | USDC | Notes |
 |-----|----------|------|-------|
-| `arc-testnet` | 5042002 | Native USDC (18 decimals on-chain) | Circle Arc Testnet |
+| `arc-testnet` | 5042002 | Native USDC (ERC-20 view: 6 decimals; gas: 18) | Circle Arc Testnet |
 | `base-sepolia` | 84532 | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | Base testnet |
 | `base-mainnet` | 8453 | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` | Production Base |
 | `arc-mainnet` | (env) | (env) | When Arc mainnet launches |

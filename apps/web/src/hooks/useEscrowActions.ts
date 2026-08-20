@@ -89,7 +89,7 @@ export function useEscrowActions(cfg: Cfg | null) {
       }) as bigint;
 
       if (existingAllowance < onChainAmount) {
-        setPending(`Approve ${humanAmount} USDC… (tx 1 of 2)`);
+        setPending(`Approve ${humanAmount} USDC… (1/3)`);
         const approveHash = await writeContractAsync({
           address: usdc,
           abi: erc20Abi,
@@ -99,7 +99,7 @@ export function useEscrowActions(cfg: Cfg | null) {
         await publicClient.waitForTransactionReceipt({ hash: approveHash });
       }
 
-      setPending(`Creating & funding escrow for ${humanAmount} USDC… (tx 2 of 2)`);
+      setPending(`Creating on-chain job for ${humanAmount} USDC…`);
       const jobRef = keccak256(stringToHex(params.jobDbId));
       const createHash = await writeContractAsync({
         address: escrow,
@@ -137,6 +137,7 @@ export function useEscrowActions(cfg: Cfg | null) {
       }
       if (onchainJobId == null) throw new Error("Could not parse JobCreated event — check the explorer");
 
+      setPending(`Funding escrow (${humanAmount} USDC)…`);
       const fundHash = await writeContractAsync({
         address: escrow,
         abi: escrowAbi,

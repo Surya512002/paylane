@@ -71,7 +71,7 @@ stateDiagram-v2
 
 | Key | Default | Bounds |
 |-----|---------|--------|
-| `PLATFORM_FEE_BPS` | 200 (2%) | 0–1000 |
+| `PLATFORM_FEE_BPS` | 10 (0.1%) | 0–1000 |
 | `REVIEW_WINDOW_HOURS` | 72 (3 days) | 24–168 |
 | `REVISION_LIMIT` | 2 | 0–5 |
 | `DISPUTE_EVIDENCE_HOURS` | 72 | 24–168 |

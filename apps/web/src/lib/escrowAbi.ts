@@ -41,6 +41,13 @@ export const escrowAbi = [
   },
   {
     type: "function",
+    name: "platformFeeBps",
+    inputs: [],
+    outputs: [{ type: "uint16" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "accept",
     inputs: [{ name: "jobId", type: "uint256" }],
     outputs: [],

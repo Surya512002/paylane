@@ -144,7 +144,7 @@ export default function DashboardPage() {
           <strong>As client</strong> — jobs you funded or drafted.{" "}
           <strong>As worker</strong> — assignments you accepted. Action items include deliveries
           waiting for accept, funded jobs ready to assign, and open disputes. Platform fee{" "}
-          {(cfg?.platformFeeBps ?? 200) / 100}% applies only when USDC releases to a worker.
+          {(cfg?.platformFeeBps ?? 10) / 100}% applies only when USDC releases to a worker.
         </p>
       </InfoCallout>
 

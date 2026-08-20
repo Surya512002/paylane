@@ -88,7 +88,7 @@ Off-chain DB tracks Draft / Published / Assigned / InProgress / RevisionRequeste
 
 | Param | Default | Notes |
 |-------|---------|-------|
-| `platformFeeBps` | 200 (2%) | Taken on release-to-worker paths only |
+| `platformFeeBps` | 10 (0.1%) | Taken on release-to-worker paths only |
 | `feeRecipient` | treasury | Receives fee portion |
 | `defaultReviewWindow` | 3 days | Copied onto job at fund |
 | `arbitrator` | admin | Resolve disputes |

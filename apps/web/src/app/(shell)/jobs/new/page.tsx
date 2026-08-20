@@ -103,7 +103,7 @@ export default function NewJobPage() {
       return 0n;
     }
   })();
-  const feeBps = cfg?.platformFeeBps ?? 200;
+  const feeBps = cfg?.platformFeeBps ?? 10;
   const fee = (amountMinor * BigInt(feeBps)) / 10000n;
   const net = amountMinor - fee;
 

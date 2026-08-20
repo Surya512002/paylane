@@ -114,7 +114,7 @@ contract PaylaneEscrowUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgr
         usdc = IERC20(usdc_);
         feeRecipient = feeRecipient_;
         arbitrator = arbitrator_;
-        platformFeeBps = 200;
+        platformFeeBps = 10; // 0.1%
         defaultReviewWindow = 3 days;
         nextJobId = 1;
         _status = _NOT_ENTERED;

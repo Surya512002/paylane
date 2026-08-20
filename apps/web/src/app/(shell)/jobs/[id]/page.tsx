@@ -286,7 +286,7 @@ export default function JobDetailPage() {
 
   const isClient = me?.id === job.client.id;
   const isWorker = me?.id === job.worker?.id;
-  const fee = (Number(job.amountMinor) * (cfg?.platformFeeBps ?? 200)) / 10_000;
+  const fee = (Number(job.amountMinor) * (cfg?.platformFeeBps ?? 10)) / 10_000;
   const net = Number(job.amountMinor) - fee;
   const escrowAddr = walletChain ? walletChain.escrowAddress : (cfg?.escrowAddress ?? null);
   const live = Boolean(cfg && !cfg.demoMode && escrowAddr);
@@ -335,7 +335,7 @@ export default function JobDetailPage() {
             <UsdcAmount minor={job.amountMinor} />
           </p>
           <p className="mt-1 text-xs text-[var(--muted)]">
-            Fee {(cfg?.platformFeeBps ?? 200) / 100}% on release → worker ≈{" "}
+            Fee {(cfg?.platformFeeBps ?? 10) / 100}% on release → worker ≈{" "}
             <UsdcAmount minor={Math.round(net).toString()} />
           </p>
         </div>

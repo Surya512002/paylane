@@ -61,7 +61,7 @@ export function workerNet(amountMinor: bigint, bps: number): bigint {
 export * from "./schemas";
 
 export const DEFAULTS = {
-  platformFeeBps: 200,
+  platformFeeBps: 10, // 0.1%
   reviewWindowHours: 72,
   revisionLimit: 2,
   disputeEvidenceHours: 72,

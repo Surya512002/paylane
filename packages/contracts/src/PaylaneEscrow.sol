@@ -39,7 +39,7 @@ contract PaylaneEscrow is ReentrancyGuard, Pausable, Ownable {
 
     IERC20 public immutable usdc;
 
-    uint16 public platformFeeBps = 200; // 2%
+    uint16 public platformFeeBps = 10; // 0.1%
     address public feeRecipient;
     address public arbitrator;
     uint64 public defaultReviewWindow = 3 days;
