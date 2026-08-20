@@ -8,6 +8,7 @@ import Link from "next/link";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero, InfoCallout } from "@/components/PageChrome";
 import { Stagger, StaggerItem } from "@/components/motion";
+import { formatPlatformFeePercent } from "@/lib/money";
 
 type Receipt = {
   id: string;
@@ -25,6 +26,7 @@ type Receipt = {
 export default function ReceiptsPage() {
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [explorer, setExplorer] = useState("https://testnet.arcscan.app");
+  const [platformFeeBps, setPlatformFeeBps] = useState(10);
   const [typeFilter, setTypeFilter] = useState<"all" | "job" | "api">("all");
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function ReceiptsPage() {
     ]).then(([rec, cfg]) => {
       setReceipts(rec.receipts ?? []);
       if (cfg.explorerUrl) setExplorer(cfg.explorerUrl);
+      if (cfg.platformFeeBps) setPlatformFeeBps(cfg.platformFeeBps);
     });
   }, []);
 
@@ -66,8 +69,9 @@ export default function ReceiptsPage() {
       <InfoCallout title="How to read this ledger" tone="brand">
         <p>
           <strong>job</strong> entries come from Mode A escrow. <strong>api</strong> entries come
-          from Mode B paid calls. Simulated demo hashes start with <code>demo:</code> — real Arc
-          hashes open on the explorer.
+          from Mode B paid calls. Platform fee on worker release is{" "}
+          <strong>{formatPlatformFeePercent(platformFeeBps)}</strong>. Simulated demo hashes start
+          with <code>demo:</code> — real Arc hashes open on the explorer.
         </p>
       </InfoCallout>
 

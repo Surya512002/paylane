@@ -58,6 +58,14 @@ export function workerNet(amountMinor: bigint, bps: number): bigint {
   return amountMinor - platformFee(amountMinor, bps);
 }
 
+/** Human-readable platform fee from basis points (10 → "0.1%", 200 → "2%"). */
+export function formatPlatformFeePercent(bps: number): string {
+  const pct = bps / 100;
+  if (Number.isInteger(pct)) return `${pct}%`;
+  const trimmed = pct.toFixed(2).replace(/\.?0+$/, "");
+  return `${trimmed}%`;
+}
+
 export * from "./schemas";
 
 export const DEFAULTS = {

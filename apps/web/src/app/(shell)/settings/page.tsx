@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatPlatformFeePercent } from "@/lib/money";
 import Link from "next/link";
 import { PageHero } from "@/components/PageChrome";
 
@@ -161,7 +162,7 @@ export default function SettingsPage() {
 
       <div className="card space-y-2 text-sm">
         <h2 className="font-display text-lg font-semibold">Money parameters</h2>
-        <Row label="Platform fee" value={`${cfg.platformFeeBps / 100}%`} />
+        <Row label="Platform fee" value={formatPlatformFeePercent(cfg.platformFeeBps)} />
         <Row label="Review window" value={`${cfg.reviewWindowHours} hours`} />
         <Row label="Revision limit" value={String(cfg.revisionLimit)} />
         <Row label="Dispute evidence" value={`${cfg.disputeEvidenceHours} hours`} />

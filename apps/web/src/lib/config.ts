@@ -1,5 +1,7 @@
 import { DEFAULTS } from "@workpay/shared";
 import { resolveActiveChain, resolveSupportedChains, type ChainPreset } from "./networks";
+import { getPublicClient } from "./chain";
+import { escrowAbi } from "./escrowAbi";
 
 function envBool(key: string, fallback: boolean): boolean {
   const v = process.env[key];
@@ -12,6 +14,13 @@ function envInt(key: string, fallback: number): number {
   if (!v) return fallback;
   const n = parseInt(v, 10);
   return Number.isFinite(n) ? n : fallback;
+}
+
+function resolvePlatformFeeBps(): number {
+  const raw = envInt("PLATFORM_FEE_BPS", DEFAULTS.platformFeeBps);
+  // Legacy env still set to 200 (2%) — product default is now 10 (0.1%).
+  if (raw === 200) return DEFAULTS.platformFeeBps;
+  return raw;
 }
 
 const activeChain = resolveActiveChain();
@@ -39,7 +48,7 @@ export const config = {
   explorerUrl: activeChain.explorerUrl,
   explorerName: activeChain.explorerName,
   faucetUrl: activeChain.faucetUrl,
-  platformFeeBps: envInt("PLATFORM_FEE_BPS", DEFAULTS.platformFeeBps),
+  platformFeeBps: resolvePlatformFeeBps(),
   reviewWindowHours: envInt("REVIEW_WINDOW_HOURS", DEFAULTS.reviewWindowHours),
   revisionLimit: envInt("REVISION_LIMIT", DEFAULTS.revisionLimit),
   disputeEvidenceHours: envInt("DISPUTE_EVIDENCE_HOURS", DEFAULTS.disputeEvidenceHours),
@@ -75,9 +84,32 @@ function publicChain(preset: ChainPreset) {
 }
 
 export function publicConfig() {
+  return buildPublicConfig(config.platformFeeBps);
+}
+
+/** Prefer on-chain platformFeeBps when live escrow is configured. */
+export async function getPublicConfig() {
+  let feeBps = config.platformFeeBps;
+  if (!config.demoMode && config.escrowAddress) {
+    try {
+      const client = getPublicClient(config.chainId);
+      const onChain = await client.readContract({
+        address: config.escrowAddress,
+        abi: escrowAbi,
+        functionName: "platformFeeBps",
+      });
+      feeBps = Number(onChain);
+    } catch {
+      /* keep env/default */
+    }
+  }
+  return buildPublicConfig(feeBps);
+}
+
+function buildPublicConfig(platformFeeBps: number) {
   return {
     appName: config.appName,
-    platformFeeBps: config.platformFeeBps,
+    platformFeeBps,
     reviewWindowHours: config.reviewWindowHours,
     revisionLimit: config.revisionLimit,
     disputeEvidenceHours: config.disputeEvidenceHours,

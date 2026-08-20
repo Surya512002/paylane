@@ -9,6 +9,7 @@ import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero, InfoCallout, StatPill, QuickLinks } from "@/components/PageChrome";
 import { Stagger, StaggerItem, MotionCard, Reveal } from "@/components/motion";
 import { SessionGate } from "@/components/SessionGate";
+import { formatPlatformFeePercent } from "@/lib/money";
 
 type Job = {
   id: string;
@@ -144,7 +145,7 @@ export default function DashboardPage() {
           <strong>As client</strong> — jobs you funded or drafted.{" "}
           <strong>As worker</strong> — assignments you accepted. Action items include deliveries
           waiting for accept, funded jobs ready to assign, and open disputes. Platform fee{" "}
-          {(cfg?.platformFeeBps ?? 10) / 100}% applies only when USDC releases to a worker.
+          {formatPlatformFeePercent(cfg?.platformFeeBps ?? 10)} applies only when USDC releases to a worker.
         </p>
       </InfoCallout>
 

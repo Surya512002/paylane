@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { publicConfig } from "@/lib/config";
+import { getPublicConfig } from "@/lib/config";
+import { formatPlatformFeePercent } from "@/lib/money";
 import { PageHero, InfoCallout, StepRail } from "@/components/PageChrome";
 
-export default function TrustPage() {
-  const cfg = publicConfig();
+export default async function TrustPage() {
+  const cfg = await getPublicConfig();
 
   return (
     <div className="space-y-10">
@@ -49,7 +50,7 @@ export default function TrustPage() {
         </div>
         <div className="stat animate-rise-delay">
           <p className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--muted)]">Platform fee</p>
-          <p className="mt-2 font-semibold text-[var(--ink)]">{cfg.platformFeeBps / 100}%</p>
+          <p className="mt-2 font-semibold text-[var(--ink)]">{formatPlatformFeePercent(cfg.platformFeeBps)}</p>
           <p className="text-xs text-[var(--muted)]">On worker release only</p>
         </div>
         <div className="stat animate-rise-delay-2">

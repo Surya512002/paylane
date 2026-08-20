@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { useEscrowActions } from "@/hooks/useEscrowActions";
 import { resolveWalletChainConfig } from "@/components/ChainSwitcher";
+import { formatPlatformFeePercent } from "@/lib/money";
 
 interface DeliveryRow {
   id: string;
@@ -335,7 +336,7 @@ export default function JobDetailPage() {
             <UsdcAmount minor={job.amountMinor} />
           </p>
           <p className="mt-1 text-xs text-[var(--muted)]">
-            Fee {(cfg?.platformFeeBps ?? 10) / 100}% on release → worker ≈{" "}
+            Fee {formatPlatformFeePercent(cfg?.platformFeeBps ?? 10)} on release → worker ≈{" "}
             <UsdcAmount minor={Math.round(net).toString()} />
           </p>
         </div>

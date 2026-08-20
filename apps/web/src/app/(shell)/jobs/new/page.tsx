@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { parseUsdcToMinor } from "@/lib/money";
+import { parseUsdcToMinor, formatPlatformFeePercent } from "@/lib/money";
 import { SubmitButton } from "@/components/SubmitButton";
 import Link from "next/link";
 import { NetworkBanner } from "@/components/NetworkBanner";
@@ -129,7 +129,7 @@ export default function NewJobPage() {
         <ul className="list-disc space-y-1 pl-5">
           <li>Full amount locks when you fund</li>
           <li>
-            {(feeBps / 100).toFixed(1)}% platform fee only on release to the worker (not on full
+            {formatPlatformFeePercent(feeBps)} platform fee only on release to the worker (not on full
             refunds)
           </li>
           <li>

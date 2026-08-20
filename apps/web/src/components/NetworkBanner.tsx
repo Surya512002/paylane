@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Reveal } from "@/components/motion";
+import { formatPlatformFeePercent } from "@/lib/money";
 
 type Cfg = {
   chainName: string;
@@ -33,7 +34,7 @@ export function NetworkBanner() {
           {" · "}
           {live ? "Live on-chain escrow" : "Demo / simulated escrow"}
           {" · "}
-          fee {(cfg.platformFeeBps / 100).toFixed(1)}% · review {cfg.reviewWindowHours}h
+          fee {formatPlatformFeePercent(cfg.platformFeeBps)} · review {cfg.reviewWindowHours}h
         </p>
         <Link href="/settings" className="font-semibold text-[var(--brand-dark)] transition hover:underline">
           Settings →
