@@ -9,6 +9,7 @@ import { PageHero, InfoCallout } from "@/components/PageChrome";
 import { SessionGate } from "@/components/SessionGate";
 import { useWalletSession } from "@/components/WalletSession";
 import { ScoreBadges } from "@/components/ScoreBadges";
+import { getProfileCompletion } from "@/lib/profileCompletion";
 
 const ROLE_OPTIONS = ["freelancer", "agent", "api-seller", "designer", "developer", "writer"];
 const AVAIL = [
@@ -136,6 +137,8 @@ export default function ProfilePage() {
     return <p className="text-sm text-[var(--muted)]">Loading profile…</p>;
   }
 
+  const completion = getProfileCompletion(profile);
+
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <NetworkBanner />
@@ -159,6 +162,30 @@ export default function ProfilePage() {
         hired={profile.jobsHired}
         rating={profile.avgRating}
       />
+
+      {!completion.complete && (
+        <div className="card-quiet space-y-2 text-sm">
+          <div className="flex justify-between font-semibold">
+            <span>Profile strength</span>
+            <span>{completion.percent}%</span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-2)]">
+            <div
+              className="h-full rounded-full bg-[var(--brand)]"
+              style={{ width: `${completion.percent}%` }}
+            />
+          </div>
+          <ul className="grid gap-1 pt-1 sm:grid-cols-2">
+            {completion.checks
+              .filter((c) => !c.done)
+              .map((c) => (
+                <li key={c.key} className="text-xs text-[var(--muted)]">
+                  ○ {c.label}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
 
       <InfoCallout title="How scores work" tone="brand">
         <ul className="list-disc space-y-1 pl-5 text-sm">

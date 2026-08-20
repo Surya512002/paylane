@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { jsonOk, jsonError, handleRouteError } from "@/lib/api-utils";
 import { serialize } from "@/lib/serialize";
 import { writeAuditLog } from "@/lib/audit";
+import { notifyUser } from "@/lib/notify";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -31,6 +32,7 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
             meritScore: true,
             completedJobs: true,
             avgRating: true,
+            roleTags: true,
             availability: true,
           },
         },
@@ -92,13 +94,11 @@ export async function POST(req: NextRequest, ctx: Ctx) {
       },
     });
 
-    await prisma.notification.create({
-      data: {
-        userId: job.clientId,
-        title: "New job proposal",
-        body: `${user.displayName ?? user.walletAddress.slice(0, 10)} proposed on “${job.title}”`,
-        href: `/jobs/${jobId}`,
-      },
+    await notifyUser({
+      userId: job.clientId,
+      title: "New job proposal",
+      body: `${user.displayName ?? user.walletAddress.slice(0, 10)} proposed on “${job.title}”`,
+      href: `/jobs/${jobId}#proposals`,
     });
 
     await writeAuditLog({

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { SubmitButton } from "@/components/SubmitButton";
 import { UsdcAmount } from "@/components/UsdcAmount";
+import { RoleBadges } from "@/components/RoleBadges";
 
 type Proposal = {
   id: string;
@@ -21,6 +22,7 @@ type Proposal = {
     meritScore: number;
     completedJobs: number;
     avgRating?: number | null;
+    roleTags?: string[];
   };
 };
 
@@ -94,7 +96,7 @@ export function JobProposals({
   if (!isSignedIn && !open) return null;
 
   return (
-    <div className="card space-y-4">
+    <div id="proposals" className="card scroll-mt-24 space-y-4">
       <h2 className="font-display text-lg font-semibold">Proposals</h2>
       <p className="text-sm text-[var(--muted)]">
         Workers apply with a short pitch. Clients accept after the job is{" "}
@@ -133,6 +135,11 @@ export function JobProposals({
                   >
                     {p.worker.displayName || short(p.worker.walletAddress)}
                   </Link>
+                  {p.worker.roleTags && p.worker.roleTags.length > 0 && (
+                    <div className="mt-1">
+                      <RoleBadges roleTags={p.worker.roleTags} size="xs" max={3} />
+                    </div>
+                  )}
                   <p className="text-xs text-[var(--muted)]">
                     Trust {p.worker.trustScore} · Merit {p.worker.meritScore} ·{" "}
                     {p.worker.completedJobs} jobs · {p.status}

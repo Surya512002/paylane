@@ -1,6 +1,5 @@
 import { DEFAULTS } from "@workpay/shared";
 import { resolveActiveChain, resolveSupportedChains, type ChainPreset } from "./networks";
-import { getPublicClient } from "./chain";
 import { escrowAbi } from "./escrowAbi";
 
 function envBool(key: string, fallback: boolean): boolean {
@@ -92,6 +91,8 @@ export async function getPublicConfig() {
   let feeBps = config.platformFeeBps;
   if (!config.demoMode && config.escrowAddress) {
     try {
+      // Lazy import avoids config ↔ chain circular dependency at module init.
+      const { getPublicClient } = await import("./chain");
       const client = getPublicClient(config.chainId);
       const onChain = await client.readContract({
         address: config.escrowAddress,

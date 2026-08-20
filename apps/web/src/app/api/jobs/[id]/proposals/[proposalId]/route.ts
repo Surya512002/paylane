@@ -5,6 +5,7 @@ import { jsonOk, jsonError, handleRouteError } from "@/lib/api-utils";
 import { serialize } from "@/lib/serialize";
 import { applyJobTransition } from "@/lib/jobs/transitions";
 import { writeAuditLog } from "@/lib/audit";
+import { notifyUser } from "@/lib/notify";
 
 type Ctx = { params: Promise<{ id: string; proposalId: string }> };
 
@@ -32,13 +33,11 @@ export async function POST(req: NextRequest, ctx: Ctx) {
         where: { id: proposalId },
         data: { status: "Rejected" },
       });
-      await prisma.notification.create({
-        data: {
-          userId: proposal.workerId,
-          title: "Proposal declined",
-          body: `Your proposal on “${job.title}” was not selected.`,
-          href: `/jobs/${jobId}`,
-        },
+      await notifyUser({
+        userId: proposal.workerId,
+        title: "Proposal declined",
+        body: `Your proposal on “${job.title}” was not selected.`,
+        href: `/jobs/${jobId}#proposals`,
       });
       return jsonOk({ proposal: serialize(updated) });
     }
@@ -56,6 +55,11 @@ export async function POST(req: NextRequest, ctx: Ctx) {
       workerAddress: proposal.worker.walletAddress,
     });
 
+    const otherPending = await prisma.proposal.findMany({
+      where: { jobId, id: { not: proposalId }, status: "Pending" },
+      select: { workerId: true },
+    });
+
     await prisma.proposal.update({
       where: { id: proposalId },
       data: { status: "Accepted" },
@@ -65,14 +69,23 @@ export async function POST(req: NextRequest, ctx: Ctx) {
       data: { status: "Rejected" },
     });
 
-    await prisma.notification.create({
-      data: {
-        userId: proposal.workerId,
-        title: "Proposal accepted",
-        body: `You were hired on “${job.title}”. Start work when ready.`,
-        href: `/jobs/${jobId}`,
-      },
+    await notifyUser({
+      userId: proposal.workerId,
+      title: "Proposal accepted — you're hired",
+      body: `You were assigned to “${job.title}”. Deliver work when ready.`,
+      href: `/jobs/${jobId}`,
     });
+
+    await Promise.all(
+      otherPending.map((p) =>
+        notifyUser({
+          userId: p.workerId,
+          title: "Proposal not selected",
+          body: `Another worker was hired on “${job.title}”.`,
+          href: `/jobs/${jobId}#proposals`,
+        }),
+      ),
+    );
 
     await writeAuditLog({
       userId: user.id,

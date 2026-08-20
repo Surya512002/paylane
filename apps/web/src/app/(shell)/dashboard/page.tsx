@@ -10,6 +10,8 @@ import { PageHero, InfoCallout, StatPill, QuickLinks } from "@/components/PageCh
 import { Stagger, StaggerItem, MotionCard, Reveal } from "@/components/motion";
 import { SessionGate } from "@/components/SessionGate";
 import { formatPlatformFeePercent } from "@/lib/money";
+import { ProfileCompletionBanner } from "@/components/ProfileCompletionBanner";
+import { ProposalsInbox } from "@/components/ProposalsInbox";
 
 type Job = {
   id: string;
@@ -23,6 +25,29 @@ type Job = {
 
 type Receipt = { id: string; amountMinor: string; kind: string };
 
+type ProfileSummary = {
+  displayName?: string | null;
+  headline?: string | null;
+  bio?: string | null;
+  skills?: string[];
+  roleTags?: string[];
+  profilePublic?: boolean;
+};
+
+type InboxProposal = {
+  id: string;
+  status: string;
+  job: { id: string; title: string; status: string };
+  worker?: {
+    id: string;
+    displayName?: string | null;
+    walletAddress: string;
+    roleTags?: string[];
+    trustScore: number;
+    meritScore: number;
+  };
+};
+
 export default function DashboardPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
@@ -33,6 +58,11 @@ export default function DashboardPage() {
     demoMode?: boolean;
     escrowAddress?: string | null;
   } | null>(null);
+  const [profile, setProfile] = useState<ProfileSummary | null>(null);
+  const [inbox, setInbox] = useState<{ incoming: InboxProposal[]; mine: InboxProposal[] }>({
+    incoming: [],
+    mine: [],
+  });
 
   useEffect(() => {
     Promise.all([
@@ -42,11 +72,17 @@ export default function DashboardPage() {
         .then((r) => r.json())
         .catch(() => ({ receipts: [] })),
       fetch("/api/config").then((r) => r.json()),
-    ]).then(([j, m, rec, c]) => {
+      fetch("/api/profile").then((r) => r.json()),
+      fetch("/api/proposals/inbox")
+        .then((r) => r.json())
+        .catch(() => ({ incoming: [], mine: [] })),
+    ]).then(([j, m, rec, c, prof, propInbox]) => {
       setJobs(j.jobs ?? []);
       setMe(m.user);
       setReceipts(rec.receipts ?? []);
       setCfg(c);
+      setProfile(prof.user ?? null);
+      setInbox({ incoming: propInbox.incoming ?? [], mine: propInbox.mine ?? [] });
     });
   }, []);
 
@@ -114,8 +150,11 @@ export default function DashboardPage() {
             <Link href="/api-seller" className="btn-secondary text-sm">
               New paid API
             </Link>
-            <Link href="/agents" className="btn-ghost text-sm">
-              Agent spend →
+            <Link href="/talent" className="btn-secondary text-sm">
+              Talent board
+            </Link>
+            <Link href="/profile" className="btn-ghost text-sm">
+              Profile →
             </Link>
           </>
         }
@@ -139,6 +178,12 @@ export default function DashboardPage() {
           </div>
         </StaggerItem>
       </Stagger>
+
+      <ProfileCompletionBanner profile={profile} />
+
+      {(inbox.incoming.length > 0 || inbox.mine.length > 0) && (
+        <ProposalsInbox incoming={inbox.incoming} mine={inbox.mine} />
+      )}
 
       <InfoCallout title="What this dashboard shows" tone="brand">
         <p>
@@ -191,6 +236,8 @@ export default function DashboardPage() {
         <h2 className="mb-3 font-display text-lg font-semibold tracking-tight">Shortcuts</h2>
         <QuickLinks
           links={[
+            { href: "/talent", label: "Talent board", desc: "Hire workers and agents" },
+            { href: "/profile", label: "Your profile", desc: "Skills, roles, public listing" },
             { href: "/receipts", label: "Receipts", desc: "Every fund, release, and API pay" },
             { href: "/docs/money-rules", label: "Money rules", desc: "Fees, auto-release, credits" },
             { href: "/settings", label: "Network settings", desc: "LIVE status & escrow address" },

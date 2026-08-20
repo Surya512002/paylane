@@ -6,6 +6,7 @@ import Link from "next/link";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero } from "@/components/PageChrome";
 import { ScoreBadges } from "@/components/ScoreBadges";
+import { RoleBadges } from "@/components/RoleBadges";
 import { UsdcAmount } from "@/components/UsdcAmount";
 import { format } from "date-fns";
 
@@ -28,6 +29,7 @@ type ProfileDetail = {
   completedJobs: number;
   jobsHired: number;
   avgRating?: number | null;
+  agentConfigured?: boolean;
   reviewsReceived: Array<{
     id: string;
     rating: number;
@@ -105,13 +107,9 @@ export default function TalentProfilePage() {
       />
 
       <div className="card space-y-4">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="badge badge-ok">{profile.availability.replace(/([A-Z])/g, " $1").trim()}</span>
-          {profile.roleTags.map((r) => (
-            <span key={r} className="badge badge-muted">
-              {r}
-            </span>
-          ))}
+          <RoleBadges roleTags={profile.roleTags} agentConfigured={profile.agentConfigured} />
           {profile.location && <span className="badge badge-muted">{profile.location}</span>}
         </div>
         <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--ink-soft)]">

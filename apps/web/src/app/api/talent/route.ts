@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
-import { jsonOk, jsonError, handleRouteError } from "@/lib/api-utils";
+import { jsonOk, handleRouteError } from "@/lib/api-utils";
 import { serialize } from "@/lib/serialize";
 import { publicProfileSelect } from "@/lib/scores";
 
@@ -45,12 +45,20 @@ export async function GET(req: NextRequest) {
 
     const profiles = await prisma.user.findMany({
       where,
-      select: publicProfileSelect(),
+      select: {
+        ...publicProfileSelect(),
+        agentPolicy: { select: { paused: true } },
+      },
       orderBy,
       take: 60,
     });
 
-    return jsonOk({ profiles: serialize(profiles) });
+    const enriched = profiles.map(({ agentPolicy, ...p }) => ({
+      ...p,
+      agentConfigured: !!agentPolicy && !agentPolicy.paused,
+    }));
+
+    return jsonOk({ profiles: serialize(enriched) });
   } catch (e) {
     return handleRouteError(e);
   }

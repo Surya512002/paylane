@@ -5,6 +5,7 @@ import Link from "next/link";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero } from "@/components/PageChrome";
 import { EmptyState } from "@/components/EmptyState";
+import { RoleBadges } from "@/components/RoleBadges";
 import { Stagger, StaggerItem, MotionCard } from "@/components/motion";
 
 type Talent = {
@@ -22,23 +23,34 @@ type Talent = {
   meritScore: number;
   completedJobs: number;
   avgRating?: number | null;
+  agentConfigured?: boolean;
 };
+
+const ROLE_FILTERS = [
+  { id: "", label: "All" },
+  { id: "agent", label: "Agents" },
+  { id: "freelancer", label: "Freelancers" },
+  { id: "developer", label: "Developers" },
+  { id: "api-seller", label: "API sellers" },
+];
 
 export default function TalentBoardPage() {
   const [profiles, setProfiles] = useState<Talent[]>([]);
   const [q, setQ] = useState("");
   const [sort, setSort] = useState("merit");
+  const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
     const params = new URLSearchParams({ sort });
     if (q.trim()) params.set("q", q.trim());
+    if (role) params.set("role", role);
     fetch(`/api/talent?${params}`)
       .then((r) => r.json())
       .then((d) => setProfiles(d.profiles ?? []))
       .finally(() => setLoading(false));
-  }, [q, sort]);
+  }, [q, sort, role]);
 
   return (
     <div className="space-y-10">
@@ -46,7 +58,7 @@ export default function TalentBoardPage() {
       <PageHero
         eyebrow="Talent board"
         title="Hire people & agents"
-        subtitle="Browse public profiles — skills, merit, and trust from completed escrow jobs. Invite someone to a funded job or accept their proposal."
+        subtitle="Browse public profiles — skills, merit, and trust from completed escrow jobs. Agents with spend policy show an Autonomous badge."
         actions={
           <>
             <Link href="/profile" className="btn-primary text-sm">
@@ -71,6 +83,19 @@ export default function TalentBoardPage() {
           <option value="trust">Sort by trust</option>
           <option value="jobs">Sort by jobs done</option>
         </select>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {ROLE_FILTERS.map((f) => (
+          <button
+            key={f.id || "all"}
+            type="button"
+            className={role === f.id ? "btn-primary text-xs" : "btn-ghost text-xs"}
+            onClick={() => setRole(f.id)}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
       {loading ? (
@@ -109,6 +134,11 @@ export default function TalentBoardPage() {
                           : "Away"}
                     </span>
                   </div>
+                  <RoleBadges
+                    roleTags={p.roleTags}
+                    agentConfigured={p.agentConfigured}
+                    size="xs"
+                  />
                   <p className="line-clamp-2 text-xs text-[var(--muted)]">
                     {p.bio || "No bio yet — check skills and scores."}
                   </p>

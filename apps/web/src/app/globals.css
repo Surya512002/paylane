@@ -247,6 +247,25 @@ svg {
   border-color: var(--border);
 }
 
+.badge-agent {
+  background: color-mix(in srgb, #7c3aed 14%, var(--surface));
+  color: #5b21b6;
+  border-color: color-mix(in srgb, #7c3aed 28%, transparent);
+}
+
+.badge-agent-live {
+  background: color-mix(in srgb, #7c3aed 22%, var(--surface));
+  color: #4c1d95;
+  border-color: color-mix(in srgb, #7c3aed 35%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, #7c3aed 12%, transparent);
+}
+
+.badge-api {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--accent-dark);
+  border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
 .input {
   @apply w-full px-3 py-2.5 text-sm outline-none transition;
   border-radius: var(--radius);

@@ -15,6 +15,7 @@ export async function GET(_req: Request, ctx: Ctx) {
       },
       select: {
         ...publicProfileSelect(),
+        agentPolicy: { select: { paused: true } },
         reviewsReceived: {
           take: 8,
           orderBy: { createdAt: "desc" },
@@ -32,7 +33,13 @@ export async function GET(_req: Request, ctx: Ctx) {
       },
     });
     if (!user) return jsonError("Profile not found or private", 404);
-    return jsonOk({ profile: serialize(user) });
+    const { agentPolicy, ...rest } = user;
+    return jsonOk({
+      profile: serialize({
+        ...rest,
+        agentConfigured: !!agentPolicy && !agentPolicy.paused,
+      }),
+    });
   } catch (e) {
     return handleRouteError(e);
   }
