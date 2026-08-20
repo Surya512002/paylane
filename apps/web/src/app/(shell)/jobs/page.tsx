@@ -45,7 +45,7 @@ export default function JobsPage() {
       <PageHero
         eyebrow="Mode A · Hire / Work"
         title="Jobs marketplace"
-        subtitle="Escrow-backed freelance work on Arc. Clients fund USDC before work starts. Workers deliver against a locked checklist — accept, revise, dispute, or auto-release."
+        subtitle="Escrow-backed freelance work on Arc and Base testnets. Fund USDC on-chain, then workers submit against a locked checklist."
         imageSrc="/brand/paylane-mode-escrow.png"
         imageAlt="Escrow illustration"
         actions={
@@ -74,7 +74,7 @@ export default function JobsPage() {
       <StepRail
         steps={[
           { title: "Draft & publish", body: "Write the brief and at least one acceptance criterion." },
-          { title: "Fund", body: "Approve USDC and lock escrow (live) or simulate (demo)." },
+          { title: "Fund", body: "Approve USDC and lock escrow on Arc or Base testnet." },
           { title: "Assign", body: "Hire a worker wallet — then work may begin." },
           { title: "Settle", body: "Accept, revise ≤2×, dispute, or auto-release." },
         ]}

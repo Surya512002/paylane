@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { createJobSchema } from "@workpay/shared";
-import { requireUser } from "@/lib/auth";
+import { requireUser, getUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { jsonOk, handleRouteError } from "@/lib/api-utils";
 import { serialize } from "@/lib/serialize";
@@ -8,8 +8,18 @@ import { writeAuditLog } from "@/lib/audit";
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await requireUser();
+    const user = await getUser();
     const status = req.nextUrl.searchParams.get("status");
+    const marketplace = await prisma.job.findMany({
+      where: {
+        OR: [{ status: "Published" }, { status: "Funded", workerId: null }],
+      },
+      include: { client: true, worker: true },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!user) {
+      return jsonOk({ jobs: serialize(marketplace) });
+    }
     const jobs = await prisma.job.findMany({
       where: {
         ...(status ? { status: status as never } : {}),
@@ -17,13 +27,6 @@ export async function GET(req: NextRequest) {
       },
       include: { client: true, worker: true },
       orderBy: { updatedAt: "desc" },
-    });
-    const marketplace = await prisma.job.findMany({
-      where: {
-        OR: [{ status: "Published" }, { status: "Funded", workerId: null }],
-      },
-      include: { client: true, worker: true },
-      orderBy: { createdAt: "desc" },
     });
     const merged = [
       ...jobs,

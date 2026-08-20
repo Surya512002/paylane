@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Shield, Zap, Receipt, Globe, Wallet, ArrowRight } from "lucide-react";
 import { InfoCallout, StepRail, QuickLinks } from "@/components/PageChrome";
 import {
   HeroCopy,
@@ -11,8 +12,11 @@ import {
   Stagger,
   StaggerItem,
 } from "@/components/motion";
+import { useWalletSession } from "@/components/WalletSession";
 
 export default function HomePage() {
+  const w = useWalletSession();
+
   return (
     <div className="w-full overflow-x-clip">
       <section className="relative w-full overflow-hidden">
@@ -28,11 +32,15 @@ export default function HomePage() {
         <LaneMotionBackdrop />
         <div className="lane-rail lane-animated absolute bottom-0 left-0 right-0 h-1.5" />
 
-        <div className="relative mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-12 sm:px-6 sm:py-16 md:min-h-[min(72vh,40rem)] md:py-20 lg:px-8">
+        <div className="relative mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-12 sm:px-6 sm:py-16 md:min-h-[min(78vh,44rem)] md:py-20 lg:px-8">
           <HeroCopy>
+            <HeroLine className="flex flex-wrap items-center gap-2">
+              <span className="badge badge-ok">Live on Arc Testnet + Base Sepolia</span>
+              <span className="badge badge-brand">Non-custodial USDC</span>
+            </HeroLine>
             <HeroLine
               as="p"
-              className="font-display text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl md:text-7xl"
+              className="mt-4 font-display text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl md:text-7xl"
             >
               Paylane
             </HeroLine>
@@ -40,34 +48,108 @@ export default function HomePage() {
               as="h1"
               className="mt-4 max-w-2xl font-display text-xl font-semibold leading-snug text-[var(--ink-soft)] sm:mt-5 sm:text-2xl md:text-3xl"
             >
-              The USDC lane for work and agents on Arc and Base.
+              Lock work in escrow. Pay APIs in the same USDC lane.
             </HeroLine>
             <HeroLine
               as="p"
               className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--muted)] sm:mt-4 sm:text-base md:text-lg"
             >
-              Escrow protects freelance jobs. Instant x402 pay unlocks APIs. One wallet, clear rules,
-              and receipts on Arc Testnet or Base Sepolia today.
+              Freelance jobs settle through a verified smart contract. Agents pay per request with
+              x402. One wallet, receipts on-chain, no platform hot wallet.
             </HeroLine>
             <HeroLine className="mt-7 flex w-full flex-col gap-2.5 sm:mt-9 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-3">
-              <Link href="/jobs/new" className="btn-primary w-full sm:w-auto">
-                Post a job
+              {!w.ready ? (
+                <button
+                  type="button"
+                  className="btn-primary w-full sm:w-auto"
+                  onClick={() => void (w.isConnected ? w.signIn() : w.connectWallet())}
+                >
+                  {w.isConnected ? "Sign in to demo" : "Connect wallet"}
+                </button>
+              ) : (
+                <Link href="/jobs/new" className="btn-primary w-full sm:w-auto">
+                  Post a funded job
+                </Link>
+              )}
+              <Link href="/jobs" className="btn-secondary w-full sm:w-auto">
+                Browse marketplace
               </Link>
-              <Link href="/agents" className="btn-secondary w-full sm:w-auto">
-                Pay an API
-              </Link>
-              <Link
-                href="/docs"
-                className="btn-ghost w-full justify-center sm:w-auto sm:justify-start"
-              >
-                Docs →
+              <Link href="/agents" className="btn-ghost w-full justify-center sm:w-auto">
+                Try a paid API →
               </Link>
             </HeroLine>
           </HeroCopy>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-20 md:pt-24 lg:px-8">
+      <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <Stagger className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { icon: Globe, label: "Networks", value: "Arc + Base", hint: "Testnet live now" },
+            { icon: Shield, label: "Escrow fee", value: "2%", hint: "Only on worker release" },
+            { icon: Zap, label: "API pay", value: "x402", hint: "HTTP 402 → unlock" },
+            { icon: Receipt, label: "Custody", value: "None", hint: "Funds stay in contract" },
+          ].map((s) => (
+            <StaggerItem key={s.label}>
+              <div className="stat flex gap-3">
+                <s.icon className="mt-1 h-5 w-5 text-[var(--brand)]" />
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--muted)]">
+                    {s.label}
+                  </p>
+                  <p className="font-display text-xl font-bold tracking-tight">{s.value}</p>
+                  <p className="text-xs text-[var(--muted)]">{s.hint}</p>
+                </div>
+              </div>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </section>
+
+      <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+        <Reveal>
+          <div className="section-panel p-5 sm:p-7">
+            <div className="lane-divider mb-4 w-12" />
+            <h2 className="section-title">90-second live demo</h2>
+            <p className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
+              Everything below is real testnet — MetaMask, USDC, and PaylaneEscrow. No simulated
+              balances.
+            </p>
+            <ol className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              {[
+                { n: "1", t: "Connect", d: "MetaMask on Arc or Base Sepolia" },
+                { n: "2", t: "Sign in", d: "SIWE message in the wallet" },
+                { n: "3", t: "Fund", d: "Approve USDC + lock escrow" },
+                { n: "4", t: "Submit", d: "Assign yourself, post delivery" },
+                { n: "5", t: "Release", d: "Accept — worker is paid on-chain" },
+              ].map((s) => (
+                <li key={s.n} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+                  <p className="font-display text-2xl font-bold text-[var(--brand)]/30">{s.n}</p>
+                  <p className="font-semibold text-[var(--ink)]">{s.t}</p>
+                  <p className="mt-1 text-xs text-[var(--muted)]">{s.d}</p>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link href="/jobs/new" className="btn-primary text-sm">
+                Start the demo
+              </Link>
+              {w.cfg?.supportedChains?.find((c) => c.faucetUrl)?.faucetUrl && (
+                <a
+                  className="btn-secondary text-sm"
+                  href={w.cfg.supportedChains.find((c) => c.faucetUrl)?.faucetUrl ?? "https://faucet.circle.com"}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Get testnet USDC
+                </a>
+              )}
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <Reveal>
           <div className="lane-divider mb-5 w-12" />
           <h2 className="section-title">How money moves</h2>
@@ -90,18 +172,10 @@ export default function HomePage() {
                 <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
                   Client locks full USDC in a non-custodial smart contract before paid work starts.
                   Worker delivers against a checklist. Accept, revise (max 2), dispute, or
-                  auto-release after silence — no blind trust.
+                  auto-release after silence.
                 </p>
-                <ul className="mt-3 space-y-1 text-sm text-[var(--ink-soft)]">
-                  <li>· 2% fee only on release to worker</li>
-                  <li>· Auto-release protects workers from ghosting</li>
-                  <li>· Admin can split disputed escrow</li>
-                </ul>
-                <Link
-                  href="/jobs"
-                  className="mt-4 inline-block text-sm font-semibold text-[var(--brand)]"
-                >
-                  Browse jobs →
+                <Link href="/jobs" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--brand)]">
+                  Browse jobs <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </MotionCard>
@@ -118,20 +192,14 @@ export default function HomePage() {
                 <span className="badge badge-ok">Mode B · Machines</span>
                 <h3 className="font-display mt-3 text-xl font-semibold">API / Agent pay</h3>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-                  Sellers meter endpoints. Buyers and agents pay per request via HTTP 402 (x402).
-                  Payment unlocks access immediately — this is not freelance escrow and successful
-                  responses are generally final.
+                  Sellers meter endpoints. Buyers and agents pay per request via HTTP 402. Payment
+                  unlocks access immediately — not freelance escrow.
                 </p>
-                <ul className="mt-3 space-y-1 text-sm text-[var(--ink-soft)]">
-                  <li>· Spend caps & kill switch for agents</li>
-                  <li>· Usage logs + unified receipts</li>
-                  <li>· Credit if seller returns 5xx after valid pay</li>
-                </ul>
                 <Link
                   href="/api-seller"
-                  className="mt-4 inline-block text-sm font-semibold text-[var(--accent)]"
+                  className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--accent)]"
                 >
-                  Monetize an endpoint →
+                  Monetize an endpoint <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </MotionCard>
@@ -139,34 +207,22 @@ export default function HomePage() {
         </Stagger>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-4 pb-20 pt-4 sm:px-6 lg:px-8">
+      <section className="mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
         <Reveal>
           <div className="lane-divider mb-5 w-12" />
           <h2 className="section-title mb-8">Typical escrow journey</h2>
         </Reveal>
         <StepRail
           steps={[
-            {
-              title: "Post & fund",
-              body: "Publish a job with a checklist, then lock USDC in PaylaneEscrow on Arc.",
-            },
-            {
-              title: "Assign & deliver",
-              body: "Worker starts only after Funded. Delivery includes notes and artifacts.",
-            },
-            {
-              title: "Review",
-              body: "Accept, request revision (≤2), or open a dispute within the review window.",
-            },
-            {
-              title: "Settle",
-              body: "Release to worker, auto-release on silence, or admin split — all receipted.",
-            },
+            { title: "Post & fund", body: "Publish a job, then lock USDC in PaylaneEscrow on testnet." },
+            { title: "Assign & deliver", body: "Assign a worker (or yourself). Submit notes + artifacts." },
+            { title: "Review", body: "Accept, request revision (≤2), or open a dispute." },
+            { title: "Settle", body: "Release on-chain, auto-release on silence, or admin split." },
           ]}
         />
       </section>
 
-      <section className="mx-auto w-full max-w-7xl space-y-8 px-4 pb-20 pt-4 sm:px-6 lg:px-8">
+      <section className="mx-auto w-full max-w-7xl space-y-8 px-4 pb-20 sm:px-6 lg:px-8">
         <Reveal>
           <div className="lane-divider mb-5 w-12" />
           <h2 className="section-title">Explore Paylane</h2>
@@ -174,36 +230,32 @@ export default function HomePage() {
         <QuickLinks
           links={[
             { href: "/dashboard", label: "Dashboard", desc: "Jobs needing action, volume, roles" },
-            { href: "/receipts", label: "Receipts", desc: "Unified ledger for jobs & API pays" },
+            { href: "/receipts", label: "Ledger", desc: "Every fund, release, and API pay" },
             { href: "/trust", label: "Trust Center", desc: "Money rules, disputes, risk" },
-            { href: "/settings", label: "Settings", desc: "Network, escrow address, LIVE vs demo" },
-            { href: "/docs/networks", label: "Arc + Base networks", desc: "Multi-chain env & deploy" },
+            { href: "/settings", label: "Live status", desc: "Escrow addresses & explorers" },
+            { href: "/docs/networks", label: "Networks", desc: "Arc Testnet and Base Sepolia" },
             { href: "/docs/for-officials", label: "For officials", desc: "Arc / Circle alignment" },
           ]}
         />
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-4 pb-24 pt-4 sm:px-6 lg:px-8">
+      <section className="mx-auto w-full max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
         <Reveal>
           <div className="relative overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow)] sm:p-8 md:flex md:items-center md:justify-between md:gap-8">
-            <div
-              className="pointer-events-none absolute inset-0 opacity-90"
-              aria-hidden
-              style={{ background: "var(--lane-soft)" }}
-            />
+            <div className="pointer-events-none absolute inset-0 opacity-90" aria-hidden style={{ background: "var(--lane-soft)" }} />
             <div className="relative z-10">
-              <div className="lane-divider mb-4 w-12" />
+              <Wallet className="mb-3 h-6 w-6 text-[var(--brand)]" />
               <h2 className="font-display text-xl font-semibold tracking-tight sm:text-2xl">
-                Built for Arc and Base
+                Ready for the room
               </h2>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-[var(--muted)]">
-                Escrow is live on Arc Testnet via an upgradeable proxy. Add Base Sepolia from the
-                header network menu — deploy escrow per chain, same app.
+                Open Settings to copy explorer links. Fund a tiny USDC job, submit work, then
+                accept — judges can watch the txs land on Arcscan or Basescan.
               </p>
             </div>
-            <div className="relative z-10 mt-6 flex flex-wrap gap-2 md:mt-0 md:shrink-0">
+            <div className="relative z-10 mt-6 flex flex-wrap gap-2 md:mt-0">
               <Link href="/settings" className="btn-primary">
-                View network
+                Live contracts
               </Link>
               <Link href="/trust" className="btn-secondary">
                 Trust Center
@@ -213,8 +265,8 @@ export default function HomePage() {
           <div className="mt-4">
             <InfoCallout title="Non-custodial by design">
               <p>
-                Paylane never holds your USDC in a platform hot wallet. Mode A funds sit in the
-                escrow contract; Mode B settles via payment proofs / Gateway patterns.
+                Paylane never holds USDC in a platform hot wallet. Mode A funds sit in the escrow
+                contract; Mode B settles via payment proofs.
               </p>
             </InfoCallout>
           </div>

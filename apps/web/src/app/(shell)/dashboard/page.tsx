@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero, InfoCallout, StatPill, QuickLinks } from "@/components/PageChrome";
 import { Stagger, StaggerItem, MotionCard, Reveal } from "@/components/motion";
+import { SessionGate } from "@/components/SessionGate";
 
 type Job = {
   id: string;
@@ -84,6 +85,7 @@ export default function DashboardPage() {
           title="Sign in to open your dashboard"
           description="Connect a wallet on Arc Testnet or Base Sepolia and Sign in (SIWE). Escrow is live on-chain — not a demo."
         />
+        <SessionGate />
       </div>
     );
   }

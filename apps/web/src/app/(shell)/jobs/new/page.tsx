@@ -7,12 +7,15 @@ import { SubmitButton } from "@/components/SubmitButton";
 import Link from "next/link";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { PageHero, InfoCallout } from "@/components/PageChrome";
+import { SessionGate } from "@/components/SessionGate";
+import { useWalletSession } from "@/components/WalletSession";
 
 export default function NewJobPage() {
   const router = useRouter();
+  const wallet = useWalletSession();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("100");
+  const [amount, setAmount] = useState("1");
   const [deadlineDays, setDeadlineDays] = useState("14");
   const [checklist, setChecklist] = useState(["Deliver source files", "Include README"]);
   const [cfg, setCfg] = useState<{
@@ -79,6 +82,13 @@ export default function NewJobPage() {
         imageSrc="/brand/paylane-mode-escrow.png"
         imageAlt=""
       />
+
+      {!wallet.ready && (
+        <SessionGate
+          title="Sign in to post a job"
+          description="Connect on Arc Testnet or Base Sepolia, sign SIWE, then save a draft. Default budget is 1 USDC so a faucet is enough."
+        />
+      )}
 
       <InfoCallout title="How money works on this job" tone="brand">
         <ul className="list-disc space-y-1 pl-5">
@@ -155,8 +165,10 @@ export default function NewJobPage() {
             + Criterion
           </button>
         </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <SubmitButton onClick={submit}>Save draft</SubmitButton>
+        {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
+        <SubmitButton onClick={submit} disabled={!wallet.ready}>
+          Save draft
+        </SubmitButton>
       </div>
     </div>
   );

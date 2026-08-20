@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Providers } from "@/components/Providers";
+import { WalletStatusStrip } from "@/components/WalletBar";
 
 const figtree = Figtree({ variable: "--font-figtree", subsets: ["latin"] });
 const syne = Syne({ variable: "--font-syne", subsets: ["latin"] });
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       >
         <Providers>
           <Header />
+          <WalletStatusStrip />
           <main className="w-full min-w-0 flex-1">{children}</main>
           <Footer />
         </Providers>
